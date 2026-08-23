@@ -8,6 +8,10 @@
   const LEGACY_STORAGE_KEY = 'mesenterica.currentCase.v1';
   const CAPACITY_PROBE_KEY = 'mesenterica.capacityProbe';
   const LIVE_INTERVAL_MS = 200;
+  const BOX_DRAW_CONFIDENCE = 0.25;
+  const REPORT_PREVIEW_MAX_DIMENSION = 1400;
+  const REPORT_PREVIEW_FALLBACK_DIMENSION = 1000;
+  const REPORT_PREVIEW_MAX_DATA_LENGTH = 2500000;
   const ALLOWED_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
   const LABELS = [
     { id: 'normal', label: 'Normal' },
@@ -17,6 +21,7 @@
     { id: 'malariae', label: 'Plasmodium malariae' },
     { id: 'falciparum', label: 'Plasmodium falciparum' }
   ];
+  const YOLO_CLASS_TO_ID = { falciparum: 'falciparum', vivax: 'vivax', malariae: 'malariae', ovale: 'ovale', knowlesi: 'knowlesi' };
 
   const elements = {
     body: document.body,
@@ -75,6 +80,7 @@
   let batchCreatedAt = new Date().toISOString();
   let batchExaminer = '';
   let renderingDocumentation = false;
+  let previewRenderToken = 0;
 
   function configureMode() {
     const mode = new URLSearchParams(window.location.search).get('mode') === 'report' ? 'report' : 'quick';
@@ -103,12 +109,8 @@
 
   async function loadModel() {
     hideAlert(); setModelState('loading', 'Memuat model lokal…');
-    modelPromise = Promise.all([
-      window.tmImage.load(MODEL_URL, METADATA_URL),
-      fetch(METADATA_URL).then((response) => { if (!response.ok) throw new Error('Metadata model tidak dapat dimuat.'); return response.json(); })
-    ]).then(([loadedModel, metadata]) => {
-      if (loadedModel.getTotalClasses() !== LABELS.length) throw new Error(`Model menghasilkan ${loadedModel.getTotalClasses()} kelas, bukan ${LABELS.length}.`);
-      model = loadedModel; modelMetadata = metadata; setModelState('ready', 'Model siap · 6 kelas'); return loadedModel;
+    modelPromise = window.MesentericaYolo.load(MODEL_URL, METADATA_URL).then((loadedModel) => {
+      model = loadedModel; modelMetadata = loadedModel.metadata; setModelState('ready', 'YOLO siap · 5 spesies'); return loadedModel;
     }).catch((error) => {
       model = null; setModelState('error', 'Model gagal dimuat');
       showAlert('Model lokal tidak dapat dimuat. Pastikan halaman dibuka melalui server web dan folder model tetap lengkap.', true); throw error;
@@ -134,28 +136,31 @@
     try { await decodeImage(image); if (!image.naturalWidth || !image.naturalHeight) throw new Error(); return { image, objectUrl }; }
     catch { URL.revokeObjectURL(objectUrl); throw new Error('Berkas tidak dapat dibaca sebagai gambar yang valid.'); }
   }
-  function mapPredictions(rawPredictions) {
-    if (!Array.isArray(rawPredictions) || rawPredictions.length !== LABELS.length) throw new Error('Jumlah keluaran model tidak sesuai.');
-    const mapped = LABELS.map((definition, index) => ({ ...definition, score: Number(rawPredictions[index].probability) }));
-    const total = mapped.reduce((sum, item) => sum + item.score, 0);
-    if (mapped.some((item) => !Number.isFinite(item.score) || item.score < 0 || item.score > 1) || total < 0.98 || total > 1.02) throw new Error('Keluaran probabilitas model tidak valid.');
+  function mapPredictions(yoloResult) {
+    const speciesScores = Object.fromEntries(Object.entries(YOLO_CLASS_TO_ID).map(([className, id]) => [id, Number(yoloResult.classScores[className] || 0)]));
+    const strongestDetection = Math.max(0, ...Object.values(speciesScores));
+    const mapped = LABELS.map((definition) => ({ ...definition, score: definition.id === 'normal' ? 1 - strongestDetection : speciesScores[definition.id] }));
+    if (mapped.some((item) => !Number.isFinite(item.score) || item.score < 0 || item.score > 1)) throw new Error('Keluaran confidence YOLO tidak valid.');
     return mapped;
   }
-  async function predictSource(source) { return mapPredictions(await (model || await modelPromise).predict(source, false)); }
-
-  function createPreview(source, width, height, maxDimension = 1400, quality = 0.82) {
-    const scale = Math.min(1, maxDimension / Math.max(width, height)); const canvas = document.createElement('canvas');
-    canvas.width = Math.max(1, Math.round(width * scale)); canvas.height = Math.max(1, Math.round(height * scale));
-    const context = canvas.getContext('2d', { alpha: false }); context.fillStyle = '#fff'; context.fillRect(0, 0, canvas.width, canvas.height);
-    context.drawImage(source, 0, 0, canvas.width, canvas.height); return canvas.toDataURL('image/jpeg', quality);
+  async function predictSource(source) {
+    const yoloResult = await (model || await modelPromise).predict(source);
+    return { results: mapPredictions(yoloResult), detections: yoloResult.detections };
   }
-  function makeReportPreview(source, width, height) {
-    let preview = createPreview(source, width, height); if (preview.length > 2500000) preview = createPreview(source, width, height, 1000, 0.72); return preview;
+
+  function makeReportPreview(source, detections) {
+    let canvas = model.drawBoxes(source, detections, { maxDimension: REPORT_PREVIEW_MAX_DIMENSION, minConfidence: BOX_DRAW_CONFIDENCE });
+    let preview = canvas.toDataURL('image/jpeg', 0.82);
+    if (preview.length > REPORT_PREVIEW_MAX_DATA_LENGTH) {
+      canvas = model.drawBoxes(source, detections, { maxDimension: REPORT_PREVIEW_FALLBACK_DIMENSION, minConfidence: BOX_DRAW_CONFIDENCE });
+      preview = canvas.toDataURL('image/jpeg', 0.72);
+    }
+    return preview;
   }
   function capacityProbe(candidateCases) {
     const probe = { version: 2, createdAt: batchCreatedAt, threshold: Number(elements.threshold.value) / 100, activeCaseIndex, examiner: batchExaminer,
       cases: candidateCases.map((item) => ({ caseKey: item.caseKey, sequence: item.sequence, image: item.image,
-        inference: { modelName: modelMetadata?.modelName || 'Model klasifikasi MESENTERICA', analysedAt: item.analysedAt, probabilities: item.results }, documentation: item.documentation })) };
+        inference: { modelName: modelMetadata?.modelName || 'YOLO11n MESENTERICA', analysedAt: item.analysedAt, probabilities: item.results }, documentation: item.documentation })) };
     try { sessionStorage.setItem(CAPACITY_PROBE_KEY, JSON.stringify(probe)); sessionStorage.removeItem(CAPACITY_PROBE_KEY); return true; }
     catch { sessionStorage.removeItem(CAPACITY_PROBE_KEY); return false; }
   }
@@ -176,10 +181,10 @@
   async function createCaseFromFile(file, source) {
     validateFile(file); const { image, objectUrl } = await loadImageFromFile(file); const startedAt = performance.now();
     try {
-      const results = await predictSource(image); const width = image.naturalWidth; const height = image.naturalHeight; const sequence = caseSequence + 1;
+      const prediction = await predictSource(image); const results = prediction.results; const width = image.naturalWidth; const height = image.naturalHeight; const sequence = caseSequence + 1;
       const analysedAt = new Date().toISOString();
       return { caseKey: makeCaseKey(sequence), sequence,
-        image: { filename: file.name || `kamera-${sequence}.jpg`, mimeType: file.type, width, height, size: file.size, reportPreview: makeReportPreview(image, width, height) },
+        image: { filename: file.name || `kamera-${sequence}.jpg`, mimeType: file.type, width, height, size: file.size, reportPreview: makeReportPreview(image, prediction.detections) },
         results, analysedAt, duration: Math.round(performance.now() - startedAt), origin: source, documentation: makeDocumentation(results, analysedAt, sequence) };
     } finally { URL.revokeObjectURL(objectUrl); }
   }
@@ -257,10 +262,24 @@
     renderGuidance(results);
     setResultView('output');
   }
+  async function renderSelectedPreview(caseItem) {
+    const token = ++previewRenderToken; const preview = new Image(); preview.decoding = 'async'; preview.src = caseItem.image.reportPreview;
+    try {
+      await decodeImage(preview);
+      if (token !== previewRenderToken || getActiveCase()?.caseKey !== caseItem.caseKey) return;
+      elements.selectedImage.width = preview.naturalWidth; elements.selectedImage.height = preview.naturalHeight;
+      const context = elements.selectedImage.getContext('2d', { alpha: false });
+      context.clearRect(0, 0, elements.selectedImage.width, elements.selectedImage.height);
+      context.drawImage(preview, 0, 0);
+      elements.selectedImage.setAttribute('aria-label', `Citra ${caseItem.image.filename} dengan bounding box hasil YOLO`);
+    } catch {
+      if (token === previewRenderToken) showAlert('Pratinjau bounding box tidak dapat ditampilkan. Coba proses ulang gambar.');
+    }
+  }
   function renderActiveCase() {
     const activeCase = getActiveCase();
-    if (!activeCase) { elements.imageSelection.hidden = true; elements.dropZone.hidden = false; elements.analysisGuidance.hidden = true; resetClinicalReview(); setResultView('empty'); return; }
-    elements.dropZone.hidden = true; elements.imageSelection.hidden = false; elements.selectedImage.src = activeCase.image.reportPreview;
+    if (!activeCase) { previewRenderToken += 1; elements.imageSelection.hidden = true; elements.dropZone.hidden = false; elements.analysisGuidance.hidden = true; resetClinicalReview(); setResultView('empty'); return; }
+    elements.dropZone.hidden = true; elements.imageSelection.hidden = false; void renderSelectedPreview(activeCase);
     elements.selectedFilename.textContent = activeCase.image.filename;
     elements.selectedFilemeta.textContent = `${activeCase.image.mimeType.replace('image/', '').toUpperCase()} · ${formatBytes(activeCase.image.size)} · ${activeCase.image.width}×${activeCase.image.height}`;
     elements.imageCounter.textContent = `Kasus ${activeCaseIndex + 1} dari ${cases.length}`; elements.previousImage.disabled = activeCaseIndex <= 0; elements.nextImage.disabled = activeCaseIndex >= cases.length - 1;
@@ -325,7 +344,7 @@
       cases: cases.map((item) => { const summary = getPresentationSummary(item.results); return {
         caseKey: item.caseKey, sequence: item.sequence,
         image: { filename: item.image.filename, mimeType: item.image.mimeType, width: item.image.width, height: item.image.height, reportPreview: item.image.reportPreview },
-        inference: { modelName: modelMetadata?.modelName || 'Model klasifikasi MESENTERICA', analysedAt: item.analysedAt,
+        inference: { modelName: modelMetadata?.modelName || 'YOLO11n MESENTERICA', analysedAt: item.analysedAt,
           topClass: { id: summary.top.id, label: summary.top.label, score: summary.top.score, status: summary.detection.id, presentation: summary.title },
           probabilities: item.results.map(({ id, label, score }) => ({ id, label, score })) },
         documentation: { ...item.documentation }
@@ -368,7 +387,7 @@
       if (!cameraStream || sessionToken !== cameraSessionToken) return; cameraLoopId = requestAnimationFrame(tick);
       if (livePredictionPaused || livePredictionInFlight || timestamp - lastLivePredictionAt < LIVE_INTERVAL_MS || elements.cameraVideo.readyState < 2) return;
       livePredictionInFlight = true; lastLivePredictionAt = timestamp;
-      try { const results = await predictSource(elements.cameraVideo); if (!cameraStream || sessionToken !== cameraSessionToken || livePredictionPaused) return; lastLiveResults = results; renderResults(results, null, true); }
+      try { const prediction = await predictSource(elements.cameraVideo); if (!cameraStream || sessionToken !== cameraSessionToken || livePredictionPaused) return; lastLiveResults = prediction.results; renderResults(prediction.results, null, true); }
       catch (error) { showAlert(`Prediksi kamera live terhenti. ${error.message || 'Tutup kamera lalu coba kembali.'}`); livePredictionPaused = true; }
       finally { livePredictionInFlight = false; }
     };
@@ -390,7 +409,7 @@
   function resetAnalysis() {
     stopCamera(false); cases = []; activeCaseIndex = -1; caseSequence = 0; batchCreatedAt = new Date().toISOString(); batchExaminer = ''; elements.fileInput.value = ''; elements.cameraInput.value = '';
     elements.threshold.value = '70'; elements.thresholdValue.textContent = '70%'; lastLiveResults = null; livePredictionPaused = false;
-    elements.selectedImage.removeAttribute('src'); elements.selectedFilename.textContent = ''; elements.selectedFilemeta.textContent = ''; elements.imageSelection.hidden = true; elements.dropZone.hidden = false;
+    previewRenderToken += 1; elements.selectedImage.width = 1; elements.selectedImage.height = 1; elements.selectedFilename.textContent = ''; elements.selectedFilemeta.textContent = ''; elements.imageSelection.hidden = true; elements.dropZone.hidden = false;
     elements.continueReport.disabled = true; elements.probabilityList.replaceChildren(); elements.analysisDuration.textContent = ''; elements.analysisGuidance.hidden = true; sessionStorage.removeItem(STORAGE_KEY); sessionStorage.removeItem(LEGACY_STORAGE_KEY); sessionStorage.removeItem(CAPACITY_PROBE_KEY);
     renderCapturedGallery(); resetClinicalReview(); hideAlert(); setBatchStatus('Batch telah direset.'); setResultView('empty');
   }

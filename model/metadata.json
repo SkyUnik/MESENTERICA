@@ -1,1 +1,14 @@
-{"tfjsVersion":"1.7.4","tmVersion":"2.4.14","packageVersion":"0.8.4-alpha2","packageName":"@teachablemachine/image","timeStamp":"2026-08-23T10:37:37.478Z","userMetadata":{},"modelName":"Deep Learning Parasitologi","labels":["Normal","Plasmodium Vivax","Plasmodium Knowles...","Plasmodium Ovale","Plasmodium Malaria...","Plasmodium Falcipa..."],"imageSize":224}
+{
+  "modelName": "YOLO11n Malaria 5-Species Detection v1",
+  "format": "graph-model",
+  "task": "detect",
+  "tfjsVersion": "4.22.0",
+  "imageSize": [1280, 1280],
+  "classNames": ["falciparum", "vivax", "malariae", "ovale", "knowlesi"],
+  "candidateThreshold": 0.05,
+  "iouThreshold": 0.45,
+  "maxDetections": 100,
+  "normalScore": "1 - strongest parasite detection confidence",
+  "source": "Ultralytics YOLO11n export",
+  "license": "AGPL-3.0"
+}

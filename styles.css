@@ -861,11 +861,11 @@ summary:focus-visible {
   display: none;
 }
 
-.image-selection img {
-  width: 100%;
+.image-canvas-frame {
   height: 258px;
-  display: block;
-  object-fit: contain;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
   background:
     linear-gradient(45deg, #e8edf2 25%, transparent 25%),
     linear-gradient(-45deg, #e8edf2 25%, transparent 25%),
@@ -874,6 +874,14 @@ summary:focus-visible {
     #f5f7fa;
   background-position: 0 0, 0 8px, 8px -8px, -8px 0;
   background-size: 16px 16px;
+}
+
+.image-selection canvas {
+  max-width: 100%;
+  max-height: 258px;
+  display: block;
+  width: auto;
+  height: auto;
 }
 
 .case-image-navigator {
@@ -2661,9 +2669,11 @@ summary:focus-visible {
     justify-self: start;
   }
 
-  .image-selection img {
+  .image-canvas-frame {
     height: 230px;
   }
+
+  .image-selection canvas { max-height: 230px; }
 
   .result-summary {
     align-items: flex-start;

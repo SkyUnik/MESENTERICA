@@ -23,7 +23,7 @@
   const GUIDANCE = Object.freeze({
     normal: Object.freeze({
       title: 'Hasil model Normal tidak menyingkirkan malaria',
-      summary: 'Kelas Normal merupakan keluaran tertinggi model, tetapi densitas parasit rendah, kualitas citra, atau lapang pandang yang tidak representatif tetap dapat memengaruhi hasil.',
+      summary: 'Indikator Normal berarti tidak ada parasit yang terdeteksi oleh YOLO, tetapi densitas parasit rendah, kualitas citra, atau lapang pandang yang tidak representatif tetap dapat memengaruhi hasil.',
       points: Object.freeze([
         'Jika kecurigaan klinis tetap ada, lanjutkan pemeriksaan mikroskopis dan/atau RDT sesuai pedoman.',
         'Tinjau preparat tipis dan tebal, kualitas pewarnaan, serta kecukupan lapang pandang.',
@@ -72,7 +72,7 @@
       points: Object.freeze([
         'Konfirmasi keberadaan parasit, spesies, stadium, dan densitas melalui mikroskopi berkualitas dan/atau RDT sesuai protokol.',
         'Nilai tanda bahaya serta kriteria malaria berat dan eskalasi sesuai prosedur klinis setempat.',
-        'Jangan menggunakan probabilitas model untuk menentukan regimen atau dosis terapi.'
+        'Jangan menggunakan skor confidence model untuk menentukan regimen atau dosis terapi.'
       ])
     })
   });

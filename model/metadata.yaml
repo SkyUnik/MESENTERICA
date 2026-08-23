@@ -1,0 +1,27 @@
+description: Ultralytics YOLO11n model trained on /Users/istudy/Documents/Side-Project/Training
+  Model YOLO MALARIA/models/runs/train/_pipeline/malaria_5species_yolo11n_v1/effective_data.yaml
+author: Ultralytics
+date: '2026-08-24T04:28:42.240370'
+version: 8.4.82
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 32
+task: detect
+batch: 1
+imgsz:
+- 1280
+- 1280
+names:
+  0: falciparum
+  1: vivax
+  2: malariae
+  3: ovale
+  4: knowlesi
+args:
+  data: null
+  batch: 1
+  fraction: 1.0
+  quantize: null
+  nms: false
+channels: 3
+end2end: false

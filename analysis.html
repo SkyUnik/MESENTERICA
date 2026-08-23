@@ -8,7 +8,7 @@
     <title>Analisis Apusan Darah | MESENTERICA</title>
     <link rel="stylesheet" href="styles.css">
     <script src="vendor/tf.min.js" defer></script>
-    <script src="vendor/teachablemachine-image.min.js" defer></script>
+    <script src="yolo-inference.js" defer></script>
     <script src="clinical-guidance.js" defer></script>
     <script src="analysis.js" defer></script>
   </head>
@@ -92,7 +92,9 @@
             <input class="sr-only" id="camera-input" type="file" accept="image/png,image/jpeg,image/webp" capture="environment" aria-label="Ambil gambar apusan darah menggunakan kamera">
             <p class="batch-status" id="batch-status" role="status" aria-live="polite"></p>
             <div class="image-selection" id="image-selection" hidden>
-              <img id="selected-image" alt="Pratinjau citra apusan darah yang dipilih">
+              <div class="image-canvas-frame">
+                <canvas id="selected-image" role="img" aria-label="Pratinjau citra apusan darah dengan bounding box hasil YOLO">Browser tidak mendukung canvas.</canvas>
+              </div>
               <div class="case-image-navigator" aria-label="Navigasi gambar kasus">
                 <button id="previous-image" type="button" aria-label="Gambar kasus sebelumnya">←</button>
                 <strong id="image-counter">Kasus 1 dari 1</strong>
@@ -152,7 +154,7 @@
               <div>
                 <div class="empty-orbit" aria-hidden="true">◎</div>
                 <h3>Belum ada gambar untuk dianalisis</h3>
-                <p>Setelah gambar dipilih, enam skor probabilitas akan ditampilkan di sini tanpa mengirim data gambar keluar dari perangkat.</p>
+                <p>Setelah gambar dipilih, confidence deteksi YOLO untuk lima spesies dan indikator tanpa deteksi akan ditampilkan tanpa mengirim gambar keluar dari perangkat.</p>
               </div>
             </div>
             <div class="result-loading" id="result-loading" role="status" aria-live="polite" hidden>
@@ -170,11 +172,11 @@
                 <span class="result-confidence" id="result-confidence"></span>
               </section>
               <div class="probability-heading">
-                <strong>Distribusi probabilitas</strong>
+                <strong>Confidence deteksi YOLO</strong>
                 <span id="analysis-duration"></span>
               </div>
-              <div class="probability-list" id="probability-list" aria-label="Enam probabilitas keluaran model"></div>
-              <p class="result-footnote">Probabilitas menunjukkan keluaran model klasifikasi gambar dan tidak mewakili kepastian diagnosis klinis.</p>
+              <div class="probability-list" id="probability-list" aria-label="Confidence deteksi YOLO per kelas"></div>
+              <p class="result-footnote">Skor spesies adalah confidence deteksi YOLO. Skor Normal berarti tidak ada parasit terdeteksi (1 dikurangi confidence spesies terkuat); skor bukan probabilitas diagnosis klinis.</p>
               <section class="detection-status-card" id="detection-status-card" aria-labelledby="detection-status-title">
                 <div>
                   <span>Status Deteksi</span>
@@ -194,7 +196,7 @@
               <div class="threshold-content">
                 <label for="threshold"><span>Threshold Deteksi</span><strong id="threshold-value">70%</strong></label>
                 <input id="threshold" type="range" min="50" max="95" step="1" value="70">
-                <p>Threshold mengatur status tampilan seluruh batch dan bukan nilai diagnostik yang tervalidasi.</p>
+                <p>Threshold mengatur status tampilan seluruh batch dan bukan nilai diagnostik yang tervalidasi. Bounding box menggunakan confidence tetap 25%.</p>
               </div>
             </details>
           </div>
@@ -230,7 +232,7 @@
             <div>
               <p class="panel-kicker">Tahap 2 · Dokumentasi kasus</p>
               <h2>Tinjauan dan kesimpulan klinisi</h2>
-              <p>Isi informasi berikut setelah meninjau gambar dan seluruh probabilitas model.</p>
+              <p>Isi informasi berikut setelah meninjau gambar dan seluruh skor confidence model.</p>
             </div>
             <div class="clinical-header-tools">
               <div class="clinical-case-navigator" aria-label="Navigasi dokumentasi kasus">
@@ -280,7 +282,7 @@
 
           <label class="review-acknowledgement">
             <input id="review-acknowledgement" name="acknowledgement" type="checkbox" required>
-            <span>Saya telah meninjau gambar dan seluruh probabilitas model. Saya memahami bahwa hasil AI bukan diagnosis mandiri dan memerlukan konfirmasi sesuai prosedur klinis.</span>
+            <span>Saya telah meninjau gambar dan seluruh skor confidence model. Saya memahami bahwa hasil AI bukan diagnosis mandiri dan memerlukan konfirmasi sesuai prosedur klinis.</span>
           </label>
 
           <div class="clinical-review-actions">

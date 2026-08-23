@@ -39,11 +39,10 @@
       !isNonEmptyString(inference.topClass.presentation) || !Number.isFinite(inference.topClass.score) || inference.topClass.score < 0 || inference.topClass.score > 1 ||
       !Array.isArray(inference.probabilities) || inference.probabilities.length !== 6 || !inference.probabilities.every(isValidProbability)) return false;
     const labelsMatch = EXPECTED_LABELS.every(([id, label], index) => inference.probabilities[index].id === id && inference.probabilities[index].label === label);
-    const total = inference.probabilities.reduce((sum, probability) => sum + probability.score, 0);
     const maximum = Math.max(...inference.probabilities.map((probability) => probability.score));
     const matchingTop = inference.probabilities.find((probability) => probability.id === inference.topClass.id);
     const expectedStatus = window.MesentericaClinical.getDetectionStatus(inference.topClass.score, threshold);
-    if (!labelsMatch || total < 0.98 || total > 1.02 || !matchingTop || matchingTop.label !== inference.topClass.label ||
+    if (!labelsMatch || !matchingTop || matchingTop.label !== inference.topClass.label ||
       Math.abs(matchingTop.score - inference.topClass.score) > 0.000001 || Math.abs(maximum - inference.topClass.score) > 0.000001 || inference.topClass.status !== expectedStatus.id) return false;
     const documentation = item.documentation;
     return documentation && isNonEmptyString(documentation.caseId) && isNonEmptyString(documentation.examinedAt) &&
