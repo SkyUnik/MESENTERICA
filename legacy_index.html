@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#9f151c">
+    <meta name="description" content="MESENTERICA membantu klinisi meninjau citra apusan darah tipis dengan model klasifikasi gambar yang berjalan lokal.">
+    <title>MESENTERICA | Tinjauan Citra Malaria</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="home-page">
+    <header class="site-header home-header">
+      <div class="header-inner">
+        <a class="brand" href="index.html" aria-label="Beranda MESENTERICA">
+          <span class="brand-mark" aria-hidden="true">ME</span>
+          <span class="brand-copy">
+            <span class="brand-name">MESENTERICA</span>
+            <span class="brand-subtitle">Malaria image review</span>
+          </span>
+        </a>
+        <div class="header-meta">
+          <span class="privacy-badge">Pemrosesan lokal</span>
+          <span class="stage-badge">Prototipe klinis</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="home-hero" aria-labelledby="home-title">
+        <div class="home-hero-image" role="img" aria-label="Preparat apusan darah dan peralatan laboratorium"></div>
+        <div class="home-hero-overlay"></div>
+        <div class="home-hero-content">
+          <p class="eyebrow">Clinical decision support prototype</p>
+          <h1 id="home-title">Tinjau citra apusan darah dengan alur yang sesuai kebutuhan Anda.</h1>
+          <p class="home-lead">Model klasifikasi TensorFlow.js berjalan langsung di perangkat untuk membantu mengenali kondisi normal atau indikasi lima spesies <em>Plasmodium</em>. Pilih analisis cepat atau dokumentasi klinis lengkap.</p>
+          <div class="home-trust-row" aria-label="Karakteristik aplikasi">
+            <span><i aria-hidden="true"></i> Gambar tetap di perangkat</span>
+            <span><i aria-hidden="true"></i> Enam keluaran model</span>
+            <span><i aria-hidden="true"></i> Wajib tinjauan klinisi</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="path-section" aria-labelledby="path-title">
+        <div class="path-intro">
+          <div>
+            <p class="panel-kicker">Mulai analisis</p>
+            <h2 id="path-title">Pilih alur kerja</h2>
+          </div>
+          <p>Keduanya menggunakan model yang sama. Perbedaannya terletak pada dokumentasi setelah hasil tersedia.</p>
+        </div>
+
+        <div class="path-grid">
+          <a class="path-card path-card-quick" href="analysis.html?mode=quick">
+            <span class="path-index" aria-hidden="true">01</span>
+            <span class="path-icon" aria-hidden="true">↗</span>
+            <span class="path-copy">
+              <span class="path-label">Tanpa laporan</span>
+              <strong>Analisis Cepat</strong>
+              <span>Unggah satu gambar, tinjau enam skor probabilitas, lalu selesai tanpa memasukkan informasi kasus.</span>
+            </span>
+            <span class="path-action">Mulai analisis <b aria-hidden="true">→</b></span>
+          </a>
+
+          <a class="path-card path-card-report" href="analysis.html?mode=report">
+            <span class="path-recommended">Direkomendasikan untuk dokumentasi</span>
+            <span class="path-index" aria-hidden="true">02</span>
+            <span class="path-icon" aria-hidden="true">≡</span>
+            <span class="path-copy">
+              <span class="path-label">Dengan tinjauan klinisi</span>
+              <strong>Analisis &amp; Laporan</strong>
+              <span>Lakukan analisis, catat interpretasi klinisi, lalu susun laporan formal yang siap dicetak atau disimpan sebagai PDF.</span>
+            </span>
+            <span class="path-action">Buka alur laporan <b aria-hidden="true">→</b></span>
+          </a>
+        </div>
+      </section>
+
+      <section class="home-safety" aria-labelledby="safety-title">
+        <div class="safety-symbol" aria-hidden="true">!</div>
+        <div>
+          <h2 id="safety-title">Bantuan triase, bukan diagnosis otomatis</h2>
+          <p>Hasil model harus dikonfirmasi melalui pemeriksaan mikroskopis dan pertimbangan klinis oleh tenaga berkualifikasi. Aplikasi tidak memberikan rekomendasi obat atau dosis.</p>
+        </div>
+        <a href="#references">Lihat dasar referensi</a>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="references">
+      <div class="site-footer-inner">
+        <span>© 2026 MESENTERICA · Prototipe untuk evaluasi, bukan perangkat medis tervalidasi.</span>
+        <nav class="footer-links" aria-label="Referensi">
+          <a href="https://www.who.int/publications/i/item/guidelines-for-malaria/" target="_blank" rel="noopener noreferrer">WHO</a>
+          <a href="https://malaria.kemkes.go.id/sites/default/files/2024-02/X_Cetak%20Buku%20Saku%20talak%20Des%202023F.pdf" target="_blank" rel="noopener noreferrer">Kemenkes RI</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

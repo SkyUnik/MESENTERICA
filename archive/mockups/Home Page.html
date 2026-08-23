@@ -1,0 +1,250 @@
+<!DOCTYPE html><html class="dark" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>MALARIA - Malaria Inteligensi Artifisial</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed-variant": "#444749",
+                      "surface-container-highest": "#dce2f3",
+                      "surface-bright": "#f9f9ff",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed": "#410002",
+                      "secondary-fixed-dim": "#bdc7d9",
+                      "on-error-container": "#93000a",
+                      "error-container": "#ffdad6",
+                      "secondary-container": "#d6e0f3",
+                      "on-tertiary": "#ffffff",
+                      "on-surface-variant": "#5b403d",
+                      "tertiary-container": "#5c5f61",
+                      "outline-variant": "#e4beb9",
+                      "on-surface": "#151c27",
+                      "inverse-on-surface": "#ebf1ff",
+                      "inverse-surface": "#2a313d",
+                      "surface-dim": "#d3daea",
+                      "surface-tint": "#b91c1c",
+                      "background": "#f9f9ff",
+                      "secondary-fixed": "#d9e3f6",
+                      "on-secondary-fixed-variant": "#3d4756",
+                      "on-background": "#151c27",
+                      "surface-container-high": "#e2e8f8",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-container": "#d8d9db",
+                      "error": "#ba1a1a",
+                      "secondary": "#555f6f",
+                      "surface": "#f9f9ff",
+                      "tertiary-fixed": "#e1e2e4",
+                      "primary-fixed-dim": "#ffb4ab",
+                      "surface-container-low": "#f0f3ff",
+                      "on-error": "#ffffff",
+                      "tertiary": "#454749",
+                      "on-tertiary-fixed": "#191c1e",
+                      "on-secondary-container": "#596373",
+                      "primary": "#93000b",
+                      "inverse-primary": "#ffb4ab",
+                      "primary-container": "#b91c1c",
+                      "on-secondary-fixed": "#121c2a",
+                      "surface-container": "#e7eefe",
+                      "primary-fixed": "#ffdad6",
+                      "on-primary-container": "#ffcdc7",
+                      "tertiary-fixed-dim": "#c5c6c8",
+                      "surface-variant": "#dce2f3",
+                      "outline": "#8f6f6c",
+                      "on-primary-fixed-variant": "#93000b",
+                      "on-secondary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1440px",
+                      "lg": "24px",
+                      "sm": "8px",
+                      "xl": "40px",
+                      "xs": "4px",
+                      "unit": "4px",
+                      "md": "16px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-bold": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "data-mono": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "display-lg": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-bold": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "data-mono": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        .transition-transform-slide {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hover-lift {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col relative overflow-hidden" style="background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuD74hTgXpuHGCO-VeKhcBAiaPtk6QgOlEMOQoZl3BFMs9XhfUPNvS3e20qQK6ynvb2XbaeQAsO2zenVA98VOjUPUBSBKy1YHcdyxfXTX5hXLyErO1xPgv9KQsj-t7VjztK1QmSZPJuvAm9AtnO-DvVDGlCuN1xM9BPRp91gFCStqXLQOnk6prCBApVEszqFWFIus_nR_7W43gsqtP968sWMhMGifmCjN2vaqEwXRunJwasfiysKTz6eGA&quot;); background-size: cover; background-position: center center; background-attachment: fixed;">
+<!-- Background Animation -->
+<!-- Header (Shared Component: TopNavBar adapted for landing) -->
+
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col relative z-10 w-full h-full mt-0 min-h-screen"><div class="absolute top-0 left-0 w-full pt-xl flex flex-col items-center z-20 pointer-events-none">
+  <h1 class="font-display-lg text-display-lg text-on-surface mb-sm tracking-widest">MALARIA</h1>
+  <p class="font-body-md text-body-md text-on-surface-variant text-center max-w-2xl px-lg">
+    Deteksi Infeksi Plasmodium Vivax, Falciparum, Ovale, Malariae, Knowlesi Deep Learning Untuk Diagnosis Cepat Malaria
+  </p>
+</div>
+<!-- Hero Context -->
+
+<!-- Split Interaction Area -->
+<div class="w-full flex-grow grid grid-cols-1 md:grid-cols-2 h-full min-h-screen">
+<!-- Quick Analysis Action -->
+<button class="group hover-lift relative backdrop-blur-md border-outline-variant overflow-hidden flex flex-col items-center justify-center text-left h-full transition-colors hover:border-primary bg-transparent" onclick="handleAction('quick')">
+<div class="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-primary transition-colors"></div>
+<div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mb-md group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
+<span class="material-symbols-outlined text-4xl">bolt</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-xs group-hover:text-primary transition-colors">Quick Analysis</h2>
+<p class="font-body-md text-body-md text-on-surface-variant text-center">Analisis Cepat Tanpa Laporan</p>
+</button>
+<!-- Report Analysis Action -->
+<button class="group hover-lift relative backdrop-blur-md border-outline-variant overflow-hidden flex flex-col items-center justify-center text-left h-full transition-colors hover:border-primary bg-transparent border-l" onclick="handleAction('report')">
+<div class="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-primary transition-colors"></div>
+<div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mb-md group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
+<span class="material-symbols-outlined text-4xl">assignment</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-xs group-hover:text-primary transition-colors">Report Analysis</h2>
+<p class="font-body-md text-body-md text-on-surface-variant text-center">Analisis Lengkap &amp; Pembuatan Laporan Klinis</p>
+</button>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+
+<script>
+        function handleAction(type) {
+            // Save intent
+            localStorage.setItem('malaria_analysis_intent', type);
+            
+            // Visual feedback before navigation
+            document.body.classList.add('transition-transform-slide', '-translate-x-full', 'opacity-0');
+            
+            // Simulated navigation delay
+            setTimeout(() => {
+                console.log(`Navigating to ${type} workflow...`);
+                // window.location.href = '/analysis'; // Normally would navigate
+                
+                // Reset for demo purposes
+                setTimeout(() => {
+                     document.body.classList.remove('-translate-x-full', 'opacity-0');
+                     alert(`Intent '${type}' saved. Transitioning to clinical interface...`);
+                }, 500);
+            }, 400);
+        }
+    </script>
+
+
+</body></html>

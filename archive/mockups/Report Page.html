@@ -1,0 +1,312 @@
+<!DOCTYPE html><html class="light" lang="en" style="width: 1280px; height: 1494px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>MALARIA Clinical Report</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Print Specific Adjustments */
+        @media print {
+            @page {
+                size: A4;
+                margin: 20mm;
+            }
+            body {
+                background-color: white !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-full-width {
+                max-width: 100% !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .break-inside-avoid {
+                break-inside: avoid;
+            }
+            .page-break-before {
+                page-break-before: always;
+            }
+        }
+    </style>
+<!-- Tailwind Config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#444749",
+                        "surface-container-highest": "#dce2f3",
+                        "surface-bright": "#f9f9ff",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#410002",
+                        "secondary-fixed-dim": "#bdc7d9",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#d6e0f3",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#5b403d",
+                        "tertiary-container": "#5c5f61",
+                        "outline-variant": "#e4beb9",
+                        "on-surface": "#151c27",
+                        "inverse-on-surface": "#ebf1ff",
+                        "inverse-surface": "#2a313d",
+                        "surface-dim": "#d3daea",
+                        "surface-tint": "#b91c1c",
+                        "background": "#f9f9ff",
+                        "secondary-fixed": "#d9e3f6",
+                        "on-secondary-fixed-variant": "#3d4756",
+                        "on-background": "#151c27",
+                        "surface-container-high": "#e2e8f8",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#d8d9db",
+                        "error": "#ba1a1a",
+                        "secondary": "#555f6f",
+                        "surface": "#f9f9ff",
+                        "tertiary-fixed": "#e1e2e4",
+                        "primary-fixed-dim": "#ffb4ab",
+                        "surface-container-low": "#f0f3ff",
+                        "on-error": "#ffffff",
+                        "tertiary": "#454749",
+                        "on-tertiary-fixed": "#191c1e",
+                        "on-secondary-container": "#596373",
+                        "primary": "#93000b",
+                        "inverse-primary": "#ffb4ab",
+                        "primary-container": "#b91c1c",
+                        "on-secondary-fixed": "#121c2a",
+                        "surface-container": "#e7eefe",
+                        "primary-fixed": "#ffdad6",
+                        "on-primary-container": "#ffcdc7",
+                        "tertiary-fixed-dim": "#c5c6c8",
+                        "surface-variant": "#dce2f3",
+                        "outline": "#8f6f6c",
+                        "on-primary-fixed-variant": "#93000b",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1440px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "xl": "40px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "md": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Poppins", "sans-serif"],
+                        "label-bold": ["Poppins", "sans-serif"],
+                        "headline-md": ["Poppins", "sans-serif"],
+                        "body-sm": ["Poppins", "sans-serif"],
+                        "data-mono": ["Poppins", "sans-serif"],
+                        "body-lg": ["Poppins", "sans-serif"],
+                        "headline-lg": ["Poppins", "sans-serif"],
+                        "display-lg": ["Poppins", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "data-mono": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md">
+<!-- TopNavBar (JSON Execution) -->
+<header class="fixed w-full top-0 z-50 bg-surface dark:bg-surface-dim border-b border-outline-variant flex justify-between items-center h-16 px-gutter w-full max-w-container-max mx-auto no-print">
+<div class="flex items-center gap-md">
+<span class="text-headline-lg font-headline-lg text-primary dark:text-primary-fixed tracking-tight">MALARIA</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex gap-sm text-primary dark:text-primary-fixed">
+</div>
+</div>
+</header>
+<div class="flex pt-16 min-h-screen">
+<!-- SideNavBar (JSON Execution) - Active state on "Reporting" -->
+<!-- Main Content Area - A4 Report Canvas -->
+<main class="p-xl bg-surface-dim flex justify-center print-full-width w-full pb-32"><div class="fixed top-lg right-lg z-50 no-print"><button class="px-md py-sm border-outline-variant rounded-full hover:bg-surface-variant text-body-sm flex items-center gap-xs transition-colors font-label-bold bg-primary text-on-primary" onclick="window.print()"><span class="material-symbols-outlined text-[18px]">print</span>Print / Save as PDF</button></div>
+<!-- A4 Container -->
+<div class="bg-surface-container-lowest w-full max-w-[850px] min-h-[1100px] border border-outline-variant rounded-xl shadow-sm p-[40px] flex flex-col gap-xl relative print-full-width" style="box-shadow: 0 1px 1px rgba(0,0,0,0.1), 0 8px 0 -4px #fff, 0 8px 1px -3px rgba(0,0,0,0.1), 0 16px 0 -8px #fff, 0 16px 1px -7px rgba(0,0,0,0.1);">
+<!-- Action Bar -->
+<!-- Report Header -->
+<div class="border-b-2 border-primary pb-md flex justify-between items-end">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight font-bold">MALARIA</h1>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-xs">Laporan Analisis Gambar Apusan Darah Tipis</h2>
+</div>
+<div class="text-right font-body-sm text-body-sm text-on-surface-variant">
+<table class="w-full text-right">
+<tbody><tr><td class="pr-sm font-bold">Report ID:</td><td class="font-data-mono text-data-mono text-on-surface">RPT-2024-8891-A</td></tr>
+<tr><td class="pr-sm font-bold">ID Pasien:</td><td class="font-data-mono text-data-mono text-on-surface">PID-77421</td></tr>
+<tr><td class="pr-sm font-bold">Date:</td><td class="text-on-surface">2024-10-26 14:30Z</td></tr>
+<tr><td class="pr-sm font-bold">Clinician:</td><td class="text-on-surface">Dr. H. Sudirman</td></tr>
+</tbody></table>
+</div>
+</div>
+<!-- Summary & Disclaimer Module -->
+<div class="flex flex-col gap-lg break-inside-avoid">
+<div class="w-full bg-[#fff5f5] border border-primary-container p-md rounded-lg flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary-container mt-xs">warning</span>
+<div class="font-body-sm text-body-sm text-on-surface">
+<strong class="text-primary-container block mb-xs">DISCLAIMER MEDIS:</strong> 
+                            Laporan ini dihasilkan oleh sistem analisis citra otomatis (AI) dan ditujukan semata-mata sebagai alat bantu diagnostik. Hasil ini <strong>harus</strong> diverifikasi secara manual menggunakan mikroskop oleh tenaga ahli patologi atau teknisi laboratorium bersertifikat sebelum digunakan untuk pengambilan keputusan klinis atau rencana pengobatan.
+                        </div>
+</div>
+</div>
+<!-- Findings Table (Removed as per instructions) -->
+<!-- Detailed Analysis Section - Image 1 -->
+<div class="border border-outline-variant rounded-lg p-md break-inside-avoid mt-md">
+<h4 class="font-label-bold text-label-bold text-on-surface mb-md">Analisis Detail: <span class="font-data-mono">IMG-001-SMR</span></h4>
+<div class="flex gap-md">
+<!-- Image Preview -->
+<div class="w-1/2 bg-black rounded overflow-hidden relative">
+<img class="w-full h-auto object-cover opacity-90 mix-blend-screen" data-alt="A high-resolution microscopic image of a thin blood smear. Numerous red blood cells are visible, stained with Giemsa, displaying a light purple hue against a clear background. Several cells contain distinct, dark purple ring-form trophozoites indicative of Plasmodium falciparum. The image has high contrast, characteristic of professional medical diagnostic imaging software." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_spyg2h5z6SrF7SfIq-xuSpM0NzvH6i09H9kvdrs0-YJmW1-BpF3TAoa-ZNponXaXqjnA0yG6Yytz6BZL1awaepYcBIwpC-D26YdF64O4JZOIYJhtNiGWXtzHp5nk130bqDoDYRowDd2DS9j-FIwMR6CzNvTGHbMfOLj-rJWi6biWXi4LehDD-FI_9qqhzkywM1hbncTPaUMnjRGi5B9ho_-J15CuwuntxdwWNCRo4ketSgZs2U7dxw">
+<!-- Removed bounding boxes -->
+</div>
+<!-- Data & Probabilities -->
+<div class="w-1/2 flex flex-col gap-sm">
+<div class="bg-surface-container-low p-sm rounded border border-outline-variant">
+<div class="font-label-bold text-label-bold text-on-surface-variant mb-xs">Ambang Batas Diagnostik</div>
+<div class="font-body-sm text-body-sm text-on-surface flex justify-between">
+<span class="">Sensitivitas Model:</span> <span class="font-data-mono">Tinggi (0.95)</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface flex justify-between">
+<span class="">Penolakan Artefak:</span> <span class="font-data-mono">Aktif</span>
+</div>
+</div>
+<div class="font-label-bold text-label-bold text-on-surface-variant mt-sm">Distribusi Probabilitas</div>
+<!-- Progress Bars -->
+<div class="flex flex-col gap-xs">
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="font-bold text-primary">P. falciparum</span>
+<span class="font-data-mono">98.5%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 98.5%"></div>
+</div>
+</div>
+<div class="flex flex-col gap-xs mt-xs">
+<div class="flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant">
+<span class="">P. vivax</span>
+<span class="font-data-mono">0.8%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-1.5">
+<div class="bg-secondary-fixed-dim h-1.5 rounded-full" style="width: 0.8%"></div>
+</div>
+</div>
+<div class="flex flex-col gap-xs mt-xs">
+<div class="flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant">
+<span class="">P. ovale</span>
+<span class="font-data-mono">0.5%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-1.5">
+<div class="bg-secondary-fixed-dim h-1.5 rounded-full" style="width: 0.5%"></div>
+</div>
+</div>
+<div class="flex flex-col gap-xs mt-xs">
+<div class="flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant">
+<span class="">P. malariae</span>
+<span class="font-data-mono">0.1%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-1.5">
+<div class="bg-secondary-fixed-dim h-1.5 rounded-full" style="width: 0.1%"></div>
+</div>
+</div>
+<div class="flex flex-col gap-xs mt-xs">
+<div class="flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant">
+<span class="">P. knowlesi</span>
+<span class="font-data-mono">0.05%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-1.5">
+<div class="bg-secondary-fixed-dim h-1.5 rounded-full" style="width: 0.05%"></div>
+</div>
+</div>
+<div class="flex flex-col gap-xs mt-xs">
+<div class="flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant">
+<span class="">Normal</span>
+<span class="font-data-mono">0.05%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-1.5">
+<div class="bg-secondary-fixed-dim h-1.5 rounded-full" style="width: 0.05%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Image Navigation Placeholder -->
+</div>
+<!-- Reference Sections (Static but editable look) -->
+<div class="grid grid-cols-2 gap-lg mt-md break-inside-avoid">
+<div class="border border-outline-variant rounded-lg p-md bg-surface-bright">
+<div class="flex justify-between items-center mb-sm border-b border-outline-variant pb-xs">
+<h4 class="font-label-bold text-label-bold text-on-surface">Prognosis Reference</h4>
+</div>
+<div class="outline-none focus:bg-white focus:ring-1 focus:ring-primary p-xs -m-xs rounded" true"="">
+Plasmodium falciparum infection is considered a medical emergency. 
+High risk of progression to severe malaria if not treated promptly.
+Monitor for signs of cerebral malaria, severe anemia, or acute respiratory distress syndrome (ARDS).
+                        </div>
+</div>
+<div class="border border-outline-variant rounded-lg p-md bg-surface-bright">
+<div class="flex justify-between items-center mb-sm border-b border-outline-variant pb-xs">
+<h4 class="font-label-bold text-label-bold text-on-surface">Suggested Treatment Plan</h4>
+</div>
+<div class="outline-none focus:bg-white focus:ring-1 focus:ring-primary p-xs -m-xs rounded" true"="">
+Line 1: Artemisinin-based Combination Therapy (ACT).
+e.g., Artemether-lumefantrine OR Dihydroartemisinin-piperaquine.
+Dosing requires weight-based calculation.
+*Requires immediate clinical review and prescription by attending physician.*
+                        </div>
+</div>
+</div>
+<!-- End of Report Marker -->
+<div class="mt-auto pt-lg border-t border-outline-variant text-center font-label-bold text-label-bold text-on-surface-variant uppercase tracking-widest pr-md">
+                    --- Malaria report ---
+                </div>
+</div>
+</main>
+</div>
+<div class="fixed bottom-lg left-1/2 -translate-x-1/2 w-auto min-w-[600px] bg-surface-container-lowest border border-outline-variant p-sm rounded-full z-50 no-print shadow-lg flex items-center justify-center">
+<div class="flex justify-between items-center gap-xl px-md w-full">
+<div class="flex gap-sm">
+<button class="px-md py-sm border-outline-variant rounded-full hover:bg-surface-variant text-body-sm flex items-center gap-xs transition-colors font-label-bold bg-primary text-on-primary">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span> Laporan Sebelumnya
+            </button>
+<button class="px-md py-sm border-outline-variant rounded-full hover:bg-surface-variant text-body-sm flex items-center gap-xs transition-colors font-label-bold bg-primary text-on-primary">
+                Laporan Selanjutnya <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<div class="text-label-bold text-on-surface-variant uppercase tracking-widest font-label-bold pr-md">
+            1 OF 5 &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</div>
+</div>
+</div>
+
+
+
+
+</body></html>

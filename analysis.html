@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#9f151c">
+    <meta name="description" content="Prototipe analisis lokal citra apusan darah tipis untuk membantu tinjauan klinis malaria.">
+    <title>Analisis Apusan Darah | MESENTERICA</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="vendor/tf.min.js" defer></script>
+    <script src="vendor/teachablemachine-image.min.js" defer></script>
+    <script src="clinical-guidance.js" defer></script>
+    <script src="analysis.js" defer></script>
+  </head>
+  <body data-analysis-mode="quick">
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="index.html" aria-label="MESENTERICA — halaman analisis">
+          <span class="brand-mark" aria-hidden="true">ME</span>
+          <span class="brand-copy">
+            <span class="brand-name">MESENTERICA</span>
+            <span class="brand-subtitle">Malaria image review</span>
+          </span>
+        </a>
+        <div class="header-meta">
+          <span class="privacy-badge">Pemrosesan lokal</span>
+          <span class="stage-badge" id="mode-badge">Analisis Cepat</span>
+          <a class="button button-quiet header-home-link" href="index.html">← Beranda</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Tinjauan citra berbantuan AI</p>
+          <h1 id="page-title">Analisis apusan darah tipis, langsung di perangkat Anda.</h1>
+          <p>Unggah satu atau beberapa citra untuk meninjau indikasi model terhadap kondisi normal atau lima spesies <em>Plasmodium</em>. Gambar tidak dikirim ke server.</p>
+        </div>
+        <div class="hero-image" role="img" aria-label="Peralatan laboratorium dan preparat apusan darah"></div>
+      </section>
+
+      <aside class="safety-strip" aria-label="Peringatan penggunaan klinis">
+        <span class="safety-symbol" aria-hidden="true">!</span>
+        <span><strong>Bukan alat diagnosis mandiri.</strong> Hasil model merupakan bantuan triase dan harus ditinjau bersama pemeriksaan mikroskopis serta pertimbangan klinis oleh tenaga yang berkualifikasi.</span>
+      </aside>
+
+      <div class="workflow-bar">
+        <div class="workflow-title">
+          <h2>Ruang kerja analisis</h2>
+          <p id="workflow-description">Unggah satu gambar dan tinjau seluruh keluaran model.</p>
+        </div>
+        <nav class="stepper" id="workflow-stepper" aria-label="Tahapan kerja">
+          <span class="step active" aria-current="step"><span class="step-number">1</span><span class="step-label">Analisis</span></span>
+          <span class="step-line" aria-hidden="true"></span>
+          <span class="step"><span class="step-number">2</span><span class="step-label">Tinjauan klinisi</span></span>
+          <span class="step-line" aria-hidden="true"></span>
+          <span class="step"><span class="step-number">3</span><span class="step-label">Laporan</span></span>
+        </nav>
+      </div>
+
+      <section class="analysis-grid" aria-label="Area analisis">
+        <article class="panel">
+          <header class="panel-header">
+            <div>
+              <p class="panel-kicker">Input batch</p>
+              <h2 class="panel-title">Citra apusan darah</h2>
+            </div>
+            <span class="status-chip">Maks. 10 MB</span>
+          </header>
+          <div class="panel-body">
+            <div class="analysis-alert" id="analysis-alert" role="alert" hidden>
+              <span class="safety-symbol" aria-hidden="true">!</span>
+              <span id="analysis-alert-text"></span>
+              <button id="model-retry" type="button" hidden>Coba lagi</button>
+            </div>
+            <div class="upload-zone" id="drop-zone" role="button" tabindex="0" aria-describedby="upload-help">
+              <div>
+                <div class="upload-icon" aria-hidden="true">↑</div>
+                <h3 id="upload-title">Letakkan gambar di sini</h3>
+                <p id="upload-help">Gunakan citra mikroskopis yang fokus dan memiliki pencahayaan merata.</p>
+                <div class="upload-actions">
+                  <button class="button button-primary" id="choose-file" type="button">Pilih satu atau beberapa gambar</button>
+                </div>
+              </div>
+            </div>
+            <div class="camera-launch-row">
+              <span>Atau gunakan kamera perangkat dengan prediksi langsung.</span>
+              <button class="button button-secondary" id="choose-camera" type="button">Gunakan Kamera</button>
+            </div>
+            <input class="sr-only" id="file-input" type="file" accept="image/png,image/jpeg,image/webp" multiple aria-label="Pilih satu atau beberapa gambar apusan darah dari perangkat">
+            <input class="sr-only" id="camera-input" type="file" accept="image/png,image/jpeg,image/webp" capture="environment" aria-label="Ambil gambar apusan darah menggunakan kamera">
+            <p class="batch-status" id="batch-status" role="status" aria-live="polite"></p>
+            <div class="image-selection" id="image-selection" hidden>
+              <img id="selected-image" alt="Pratinjau citra apusan darah yang dipilih">
+              <div class="case-image-navigator" aria-label="Navigasi gambar kasus">
+                <button id="previous-image" type="button" aria-label="Gambar kasus sebelumnya">←</button>
+                <strong id="image-counter">Kasus 1 dari 1</strong>
+                <button id="next-image" type="button" aria-label="Gambar kasus berikutnya">→</button>
+              </div>
+              <div class="image-selection-meta">
+                <strong id="selected-filename"></strong>
+                <span id="selected-filemeta"></span>
+              </div>
+              <div class="image-selection-actions">
+                <button class="button button-secondary" id="add-images" type="button">Tambah gambar</button>
+                <button class="button button-quiet" id="remove-case" type="button">Hapus kasus</button>
+                <button class="button button-quiet" id="reset-analysis" type="button">Reset semua</button>
+              </div>
+            </div>
+            <div class="camera-workspace" id="camera-workspace" hidden>
+              <div class="camera-frame">
+                <video id="camera-video" autoplay muted playsinline aria-label="Pratinjau langsung kamera"></video>
+                <span class="camera-live-badge"><span aria-hidden="true"></span> Live</span>
+              </div>
+              <div class="camera-workspace-copy">
+                <strong>Kamera dan keluaran model aktif</strong>
+                <span id="camera-capture-count">Belum ada frame disimpan</span>
+              </div>
+              <div class="camera-actions">
+                <button class="button button-primary" id="capture-image" type="button">Capture Gambar</button>
+                <button class="button button-secondary" id="close-camera" type="button">Tutup Kamera</button>
+              </div>
+              <section class="camera-capture-gallery" id="camera-capture-gallery" aria-labelledby="camera-capture-gallery-title" hidden>
+                <header>
+                  <div>
+                    <strong id="camera-capture-gallery-title">Gambar yang telah dicapture</strong>
+                    <span>Setiap gambar di bawah ini sudah disimpan sebagai satu kasus.</span>
+                  </div>
+                  <span class="camera-capture-gallery-count" id="camera-capture-gallery-count">0 gambar</span>
+                </header>
+                <div class="camera-capture-list" id="camera-capture-list"></div>
+              </section>
+            </div>
+            <div class="upload-note">
+              <span>Format: PNG, JPEG, WebP</span>
+              <span>Beberapa gambar per analisis</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel result-panel" aria-labelledby="result-title">
+          <header class="panel-header">
+            <div>
+              <p class="panel-kicker">Keluaran model</p>
+              <h2 class="panel-title" id="result-title">Hasil analisis</h2>
+            </div>
+            <span class="model-state" id="model-state" data-state="loading" role="status" aria-live="polite">Memuat model lokal…</span>
+          </header>
+          <div class="panel-body">
+            <div class="empty-state" id="result-empty" role="status" aria-live="polite">
+              <div>
+                <div class="empty-orbit" aria-hidden="true">◎</div>
+                <h3>Belum ada gambar untuk dianalisis</h3>
+                <p>Setelah gambar dipilih, enam skor probabilitas akan ditampilkan di sini tanpa mengirim data gambar keluar dari perangkat.</p>
+              </div>
+            </div>
+            <div class="result-loading" id="result-loading" role="status" aria-live="polite" hidden>
+              <span class="analysis-spinner" aria-hidden="true"></span>
+              <strong>Menganalisis citra…</strong>
+              <span>Model berjalan secara lokal di perangkat ini.</span>
+            </div>
+            <div class="result-output" id="result-output" hidden>
+              <section class="result-summary" aria-labelledby="suggestion-label">
+                <div>
+                  <p id="suggestion-label">Indikasi model</p>
+                  <h3 id="suggestion-title" aria-live="polite"></h3>
+                  <span id="suggestion-detail"></span>
+                </div>
+                <span class="result-confidence" id="result-confidence"></span>
+              </section>
+              <div class="probability-heading">
+                <strong>Distribusi probabilitas</strong>
+                <span id="analysis-duration"></span>
+              </div>
+              <div class="probability-list" id="probability-list" aria-label="Enam probabilitas keluaran model"></div>
+              <p class="result-footnote">Probabilitas menunjukkan keluaran model klasifikasi gambar dan tidak mewakili kepastian diagnosis klinis.</p>
+              <section class="detection-status-card" id="detection-status-card" aria-labelledby="detection-status-title">
+                <div>
+                  <span>Status Deteksi</span>
+                  <strong id="detection-status-title">—</strong>
+                  <p id="detection-status-description">—</p>
+                </div>
+                <div class="detection-legend" aria-label="Legenda status deteksi">
+                  <span class="legend-confident"><i></i><b>Yakin</b> ≥ threshold</span>
+                  <span class="legend-less"><i></i><b>Kurang Yakin</b> 50%–threshold</span>
+                  <span class="legend-not"><i></i><b>Tidak Yakin</b> &lt;50%</span>
+                </div>
+                <p class="detection-disclaimer">Warna menunjukkan keyakinan keluaran model, bukan kepastian diagnosis atau tingkat keparahan pasien.</p>
+              </section>
+            </div>
+            <details class="threshold-box">
+              <summary>Pengaturan lanjutan</summary>
+              <div class="threshold-content">
+                <label for="threshold"><span>Threshold Deteksi</span><strong id="threshold-value">70%</strong></label>
+                <input id="threshold" type="range" min="50" max="95" step="1" value="70">
+                <p>Threshold mengatur status tampilan seluruh batch dan bukan nilai diagnostik yang tervalidasi.</p>
+              </div>
+            </details>
+          </div>
+        </article>
+      </section>
+
+      <section class="analysis-guidance-panel" id="analysis-guidance" aria-labelledby="analysis-guidance-title" hidden>
+        <div class="analysis-guidance-block">
+          <p class="panel-kicker">Prioritas tinjauan non-preskriptif</p>
+          <h2 id="analysis-guidance-title">—</h2>
+          <p id="analysis-guidance-summary">—</p>
+          <ul id="analysis-guidance-points"></ul>
+        </div>
+        <div class="analysis-reference-block">
+          <p class="panel-kicker">04 · Dasar referensi</p>
+          <h2>Referensi untuk kasus aktif</h2>
+          <ol id="analysis-reference-list"></ol>
+          <p>Referensi ditampilkan terbuka agar pengguna dapat memeriksa dasar panduan sebelum dokumentasi kasus.</p>
+        </div>
+      </section>
+
+      <section class="panel report-section" id="report-section" aria-labelledby="report-step-title">
+        <div class="report-lock" id="report-locked-state">
+          <span class="lock-mark" aria-hidden="true">2</span>
+          <div>
+            <h2 id="report-step-title">Tinjauan klinisi dan pembuatan laporan</h2>
+            <p>Tahap ini akan terbuka setelah hasil model tersedia. Setiap gambar menjadi satu kasus dan keputusan klinisi tetap dicatat terpisah dari indikasi model.</p>
+          </div>
+          <button class="button button-secondary" id="continue-report" type="button" disabled>Lanjutkan ke laporan</button>
+        </div>
+        <form class="clinical-review" id="clinical-review" novalidate hidden>
+          <header class="clinical-review-header">
+            <div>
+              <p class="panel-kicker">Tahap 2 · Dokumentasi kasus</p>
+              <h2>Tinjauan dan kesimpulan klinisi</h2>
+              <p>Isi informasi berikut setelah meninjau gambar dan seluruh probabilitas model.</p>
+            </div>
+            <div class="clinical-header-tools">
+              <div class="clinical-case-navigator" aria-label="Navigasi dokumentasi kasus">
+                <button id="previous-documentation" type="button" aria-label="Dokumentasi kasus sebelumnya">←</button>
+                <strong id="documentation-counter">Kasus 1 dari 1</strong>
+                <button id="next-documentation" type="button" aria-label="Dokumentasi kasus berikutnya">→</button>
+              </div>
+              <div class="model-suggestion-readonly" aria-label="Indikasi model tidak dapat diedit">
+                <span>Indikasi model</span>
+                <strong id="review-model-suggestion">—</strong>
+              </div>
+            </div>
+          </header>
+
+          <div class="batch-autofill-row">
+            <div>
+              <strong>Auto-Fill seluruh batch</strong>
+              <span>Timpa ID unik, nama pemeriksa, dan kesimpulan berdasarkan indikasi tiap kasus.</span>
+            </div>
+            <button class="button button-secondary" id="autofill-all" type="button">Auto-Fill Semua Kasus</button>
+          </div>
+
+          <div class="clinical-form-grid">
+            <label class="field-group">
+              <span>ID Kasus <b aria-hidden="true">*</b></span>
+              <input id="case-id" name="caseId" type="text" maxlength="50" autocomplete="off" placeholder="Contoh: KASUS-2026-001" required>
+            </label>
+            <label class="field-group">
+              <span>Tanggal dan waktu pemeriksaan <b aria-hidden="true">*</b></span>
+              <input id="examined-at" name="examinedAt" type="datetime-local" required>
+            </label>
+            <label class="field-group clinical-span-2">
+              <span>Nama pemeriksa batch <b aria-hidden="true">*</b></span>
+              <input id="examiner" name="examiner" type="text" maxlength="100" autocomplete="name" placeholder="Nama lengkap dan gelar profesional" required>
+              <small>Diisi satu kali dan digunakan pada seluruh laporan dalam batch.</small>
+            </label>
+            <label class="field-group clinical-span-2">
+              <span>Kesimpulan klinisi <b aria-hidden="true">*</b></span>
+              <textarea id="clinician-conclusion" name="clinicianConclusion" rows="4" maxlength="1000" placeholder="Tuliskan interpretasi klinis setelah meninjau citra dan hasil model…" required></textarea>
+              <small>Terisi awal dari indikasi model dan tetap menjadi tanggung jawab klinisi untuk ditinjau atau diubah.</small>
+            </label>
+            <label class="field-group clinical-span-2">
+              <span>Catatan tambahan</span>
+              <textarea id="case-notes" name="notes" rows="3" maxlength="1500" placeholder="Kualitas preparat, temuan mikroskopis, atau konteks lain yang relevan (opsional)"></textarea>
+            </label>
+          </div>
+
+          <label class="review-acknowledgement">
+            <input id="review-acknowledgement" name="acknowledgement" type="checkbox" required>
+            <span>Saya telah meninjau gambar dan seluruh probabilitas model. Saya memahami bahwa hasil AI bukan diagnosis mandiri dan memerlukan konfirmasi sesuai prosedur klinis.</span>
+          </label>
+
+          <div class="clinical-review-actions">
+            <p id="case-save-status" role="status" aria-live="polite">Data hanya disimpan sementara di tab ini dan akan dihapus saat analisis direset.</p>
+            <button class="button button-primary" id="prepare-report" type="submit" disabled>Siapkan laporan</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <dialog class="autofill-dialog" id="autofill-dialog" aria-labelledby="autofill-dialog-title">
+      <h2 id="autofill-dialog-title">Timpa dokumentasi seluruh kasus?</h2>
+      <p>Tindakan ini menghasilkan ulang seluruh ID kasus, menerapkan nama pemeriksa batch, dan mengganti kesimpulan klinisi dengan indikasi model masing-masing kasus.</p>
+      <div>
+        <button class="button button-secondary" id="cancel-autofill" type="button">Batal</button>
+        <button class="button button-primary" id="confirm-autofill" type="button">Ya, timpa semua</button>
+      </div>
+    </dialog>
+
+    <footer class="site-footer">
+      <div class="site-footer-inner">
+        <span>© 2026 MESENTERICA · Prototipe untuk evaluasi, bukan perangkat medis tervalidasi.</span>
+        <nav class="footer-links" aria-label="Referensi">
+          <a href="https://www.who.int/publications/i/item/guidelines-for-malaria/" target="_blank" rel="noopener noreferrer">WHO</a>
+          <a href="https://malaria.kemkes.go.id/sites/default/files/2024-02/X_Cetak%20Buku%20Saku%20talak%20Des%202023F.pdf" target="_blank" rel="noopener noreferrer">Kemenkes RI</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

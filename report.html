@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#9f151c">
+    <meta name="description" content="Laporan tinjauan klinis MESENTERICA untuk analisis citra apusan darah tipis.">
+    <title>Laporan Tinjauan Klinis | MESENTERICA</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="clinical-guidance.js" defer></script>
+    <script src="report-state.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header no-print">
+      <div class="header-inner">
+        <a class="brand" href="index.html" aria-label="Kembali ke beranda MESENTERICA">
+          <span class="brand-mark" aria-hidden="true">ME</span>
+          <span class="brand-copy">
+            <span class="brand-name">MESENTERICA</span>
+            <span class="brand-subtitle">Clinical review report</span>
+          </span>
+        </a>
+        <div class="header-meta">
+          <span class="privacy-badge">Data kasus lokal</span>
+          <span class="stage-badge">Prototipe klinis</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="report-workspace">
+      <div class="report-toolbar">
+        <div class="report-toolbar-copy">
+          <h1>Laporan tinjauan klinis</h1>
+          <p id="report-screen-counter">Pratinjau dokumen A4 dari kasus aktif.</p>
+        </div>
+        <div class="toolbar-actions">
+          <a class="button button-secondary" href="analysis.html?mode=report">← Kembali ke analisis</a>
+          <button class="button button-secondary" id="print-current" type="button" aria-describedby="print-help" disabled>Cetak/Simpan PDF — Halaman Ini</button>
+          <button class="button button-primary" id="print-all" type="button" aria-describedby="print-help" disabled>Cetak/Simpan Seluruh Laporan PDF</button>
+        </div>
+      </div>
+      <p class="sr-only" id="print-help">Tombol tersedia setelah data kasus aktif berhasil dimuat.</p>
+
+      <button class="report-floating-nav report-floating-prev no-print" id="report-previous" type="button" aria-label="Laporan kasus sebelumnya" disabled>←</button>
+      <button class="report-floating-nav report-floating-next no-print" id="report-next" type="button" aria-label="Laporan kasus berikutnya" disabled>→</button>
+      <div class="report-keyboard-tip no-print" id="report-keyboard-tip" hidden>Gunakan tombol ← → untuk berpindah laporan</div>
+
+      <div class="report-stack" id="report-stack">
+      <article class="report-paper" id="report-paper" aria-labelledby="document-title">
+        <header class="report-document-header">
+          <div>
+            <h2>MESENTERICA</h2>
+            <p id="document-title">Laporan Analisis Citra Apusan Darah Tipis</p>
+          </div>
+          <dl class="report-meta">
+            <dt>ID laporan</dt><dd id="report-meta-id">—</dd>
+            <dt>ID kasus</dt><dd id="report-meta-case">—</dd>
+            <dt>Waktu pemeriksaan</dt><dd id="report-meta-examined">—</dd>
+            <dt>Waktu analisis</dt><dd id="report-meta-time">—</dd>
+            <dt>Pemeriksa</dt><dd id="report-meta-examiner">—</dd>
+          </dl>
+        </header>
+
+        <aside class="document-alert">
+          <span class="safety-symbol" aria-hidden="true">!</span>
+          <span><strong>Peringatan:</strong> laporan ini merupakan dokumentasi bantuan analisis citra berbasis AI. Hasil harus diverifikasi melalui pemeriksaan mikroskopis dan tinjauan klinis oleh tenaga berkualifikasi sebelum digunakan dalam pengambilan keputusan klinis.</span>
+        </aside>
+
+        <div class="formal-report-content" id="formal-report-content" hidden>
+          <section class="report-result-banner" id="report-result-banner" aria-labelledby="report-result-title">
+            <div>
+              <p>Ringkasan keluaran model</p>
+              <h3 id="report-result-title">—</h3>
+              <span id="report-result-detail">—</span>
+              <span class="report-detection-badge" id="report-detection-badge">—</span>
+            </div>
+            <div class="report-result-score">
+              <strong id="report-top-score">—</strong>
+              <span>Skor tertinggi</span>
+            </div>
+          </section>
+
+          <section class="report-detection-legend report-avoid-break" aria-labelledby="report-detection-legend-title">
+            <h3 id="report-detection-legend-title">Legenda status deteksi</h3>
+            <div class="detection-legend">
+              <span class="legend-confident"><i></i><b>Yakin</b> ≥ threshold</span>
+              <span class="legend-less"><i></i><b>Kurang Yakin</b> 50%–threshold</span>
+              <span class="legend-not"><i></i><b>Tidak Yakin</b> &lt;50%</span>
+            </div>
+            <p>Warna menggambarkan keyakinan keluaran model dan bukan kepastian diagnosis atau tingkat keparahan pasien.</p>
+          </section>
+
+          <section class="report-analysis-section report-avoid-break" aria-labelledby="report-image-title">
+            <div class="report-section-heading">
+              <div>
+                <p>01 · Bukti citra</p>
+                <h3 id="report-image-title">Citra dan metadata analisis</h3>
+              </div>
+              <span id="report-filename-label">—</span>
+            </div>
+            <div class="report-image-grid">
+              <figure class="report-image-frame">
+                <img id="report-image" alt="Citra apusan darah yang dianalisis">
+              </figure>
+              <dl class="report-model-details">
+                <div><dt>Model</dt><dd id="report-model-name">—</dd></div>
+                <div><dt>Dimensi citra</dt><dd id="report-image-size">—</dd></div>
+                <div><dt>Waktu analisis</dt><dd id="report-analysis-time">—</dd></div>
+                <div><dt>Threshold Deteksi</dt><dd id="report-threshold">—</dd></div>
+                <div><dt>Status Deteksi</dt><dd id="report-threshold-status">—</dd></div>
+              </dl>
+            </div>
+          </section>
+
+          <section class="report-analysis-section report-avoid-break" aria-labelledby="report-probability-title">
+            <div class="report-section-heading">
+              <div>
+                <p>02 · Keluaran model</p>
+                <h3 id="report-probability-title">Distribusi probabilitas enam kelas</h3>
+              </div>
+              <span>Nilai tidak diubah</span>
+            </div>
+            <div class="report-probability-list" id="report-probability-list"></div>
+            <p class="report-section-note">Probabilitas adalah keluaran model klasifikasi gambar, bukan ukuran kepastian diagnosis klinis.</p>
+          </section>
+
+          <section class="report-analysis-section report-avoid-break" aria-labelledby="report-clinician-title">
+            <div class="report-section-heading">
+              <div>
+                <p>03 · Tinjauan manusia</p>
+                <h3 id="report-clinician-title">Kesimpulan klinisi</h3>
+              </div>
+              <span>Diisi oleh pemeriksa</span>
+            </div>
+            <blockquote class="clinician-conclusion" id="report-clinician-conclusion">—</blockquote>
+            <div class="report-notes-block">
+              <strong>Catatan tambahan</strong>
+              <p id="report-case-notes">—</p>
+            </div>
+          </section>
+
+          <section class="report-guidance report-avoid-break" aria-labelledby="report-guidance-title">
+            <div class="guidance-mark" aria-hidden="true">i</div>
+            <div>
+              <p>Prioritas tinjauan non-preskriptif</p>
+              <h3 id="report-guidance-title">—</h3>
+              <p id="report-guidance-summary">—</p>
+              <ul id="report-guidance-points"></ul>
+            </div>
+          </section>
+
+          <section class="report-references report-avoid-break" aria-labelledby="report-reference-title">
+            <div class="report-section-heading">
+              <div>
+                <p>04 · Dasar referensi</p>
+                <h3 id="report-reference-title">Sumber panduan</h3>
+              </div>
+              <span>Diperiksa Agustus 2026</span>
+            </div>
+            <ol id="report-reference-list"></ol>
+            <p>Referensi disediakan untuk verifikasi profesional. Laporan ini tidak menggantikan pedoman institusi, pemeriksaan laboratorium, atau penilaian klinis.</p>
+          </section>
+        </div>
+
+        <section class="report-placeholder" aria-label="Status data laporan">
+          <div>
+            <div class="report-placeholder-mark" id="report-placeholder-mark" aria-hidden="true">□</div>
+            <h3 id="report-placeholder-title">Belum ada kasus aktif</h3>
+            <p id="report-placeholder-description">Selesaikan analisis gambar dan tinjauan klinisi terlebih dahulu. Data kasus aktif akan ditampilkan di halaman ini tanpa dikirim ke server.</p>
+            <dl class="received-case-summary" id="received-case-summary" hidden>
+              <div><dt>Gambar</dt><dd id="received-filename">—</dd></div>
+              <div><dt>Indikasi model</dt><dd id="received-suggestion">—</dd></div>
+              <div><dt>Kesimpulan klinisi</dt><dd id="received-conclusion">—</dd></div>
+            </dl>
+            <a class="button button-primary" id="report-placeholder-action" href="analysis.html?mode=report">Mulai analisis</a>
+          </div>
+        </section>
+
+        <footer class="report-template-footer">
+          <span>MESENTERICA · Prototipe bantuan tinjauan</span>
+          <span id="report-footer-status">Dokumen belum berisi hasil kasus</span>
+        </footer>
+      </article>
+      </div>
+      <div class="print-all-container" id="print-all-container" hidden></div>
+    </main>
+  </body>
+</html>

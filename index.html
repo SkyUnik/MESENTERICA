@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#9f151c">
+    <meta name="description" content="Beranda alternatif MALARIA untuk memilih analisis cepat atau analisis dengan laporan klinis.">
+    <title>MALARIA | Pilih Alur Analisis</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="alternative-page">
+    <main class="alternative-home" aria-labelledby="alternative-title">
+      <button class="alternative-title" id="alternative-title" type="button" aria-haspopup="dialog" aria-controls="premise-dialog">
+        <span>MALARIA</span>
+        <span class="alternative-title-hint">Klik untuk mengenal Aplikasi</span>
+      </button>
+
+      <div class="alternative-split">
+        <a class="alternative-choice alternative-quick" href="analysis.html?mode=quick">
+          <span class="alternative-choice-content">
+            <span class="alternative-icon" aria-hidden="true">ϟ</span>
+            <strong>Quick Analysis</strong>
+            <span>Analisis cepat tanpa laporan</span>
+          </span>
+          <span class="alternative-corner" aria-hidden="true">01</span>
+        </a>
+
+        <a class="alternative-choice alternative-report" href="analysis.html?mode=report">
+          <span class="alternative-choice-content">
+            <span class="alternative-icon" aria-hidden="true">▤</span>
+            <strong>Report Analysis</strong>
+            <span>Analisis lengkap dan pembuatan laporan klinis</span>
+          </span>
+          <span class="alternative-corner" aria-hidden="true">02</span>
+        </a>
+      </div>
+    </main>
+
+    <dialog class="premise-dialog" id="premise-dialog" aria-labelledby="premise-title">
+      <button class="dialog-close" id="dialog-close" type="button" aria-label="Tutup penjelasan">×</button>
+      <p class="dialog-kicker">Tentang aplikasi</p>
+      <h2 id="premise-title">MALARIA</h2>
+      <p class="dialog-lead">Prototipe bantuan tinjauan citra apusan darah tipis untuk mendukung klinisi mengenali indikasi kondisi normal atau salah satu dari lima spesies <em>Plasmodium</em>.</p>
+
+      <div class="dialog-facts">
+        <div>
+          <span aria-hidden="true">01</span>
+          <p><strong>Berjalan lokal</strong>Gambar dianalisis melalui TensorFlow.js langsung di perangkat dan tidak dikirim ke server.</p>
+        </div>
+        <div>
+          <span aria-hidden="true">02</span>
+          <p><strong>Enam keluaran</strong>Model menampilkan probabilitas Normal, <em>P. vivax</em>, <em>P. knowlesi</em>, <em>P. ovale</em>, <em>P. malariae</em>, dan <em>P. falciparum</em>.</p>
+        </div>
+        <div>
+          <span aria-hidden="true">03</span>
+          <p><strong>Tinjauan klinis wajib</strong>Hasil merupakan bantuan triase, bukan diagnosis otomatis, dan harus dikonfirmasi melalui pemeriksaan mikroskopis.</p>
+        </div>
+      </div>
+
+      <div class="dialog-modes">
+        <p><strong>Quick Analysis</strong> untuk tinjauan tanpa dokumentasi kasus.</p>
+        <p><strong>Report Analysis</strong> untuk menambahkan interpretasi klinisi dan membuat laporan formal.</p>
+      </div>
+      <button class="button button-primary dialog-confirm" id="dialog-confirm" type="button">Saya mengerti</button>
+    </dialog>
+
+    <script>
+      const premiseDialog = document.getElementById('premise-dialog');
+      const titleButton = document.getElementById('alternative-title');
+      const closeButton = document.getElementById('dialog-close');
+      const confirmButton = document.getElementById('dialog-confirm');
+
+      titleButton.addEventListener('click', () => premiseDialog.showModal());
+      closeButton.addEventListener('click', () => premiseDialog.close());
+      confirmButton.addEventListener('click', () => premiseDialog.close());
+      premiseDialog.addEventListener('click', (event) => {
+        if (event.target === premiseDialog) premiseDialog.close();
+      });
+    </script>
+  </body>
+</html>

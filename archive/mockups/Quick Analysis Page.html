@@ -1,0 +1,282 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Analysis &amp; Model Detection - MALARIA</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed-variant": "#444749",
+                        "surface-container-highest": "#dce2f3",
+                        "surface-bright": "#f9f9ff",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#410002",
+                        "secondary-fixed-dim": "#bdc7d9",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#d6e0f3",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#5b403d",
+                        "tertiary-container": "#5c5f61",
+                        "outline-variant": "#e4beb9",
+                        "on-surface": "#151c27",
+                        "inverse-on-surface": "#ebf1ff",
+                        "inverse-surface": "#2a313d",
+                        "surface-dim": "#d3daea",
+                        "surface-tint": "#b91c1c",
+                        "background": "#f9f9ff",
+                        "secondary-fixed": "#d9e3f6",
+                        "on-secondary-fixed-variant": "#3d4756",
+                        "on-background": "#151c27",
+                        "surface-container-high": "#e2e8f8",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#d8d9db",
+                        "error": "#ba1a1a",
+                        "secondary": "#555f6f",
+                        "surface": "#f9f9ff",
+                        "tertiary-fixed": "#e1e2e4",
+                        "primary-fixed-dim": "#ffb4ab",
+                        "surface-container-low": "#f0f3ff",
+                        "on-error": "#ffffff",
+                        "tertiary": "#454749",
+                        "on-tertiary-fixed": "#191c1e",
+                        "on-secondary-container": "#596373",
+                        "primary": "#93000b",
+                        "inverse-primary": "#ffb4ab",
+                        "primary-container": "#b91c1c",
+                        "on-secondary-fixed": "#121c2a",
+                        "surface-container": "#e7eefe",
+                        "primary-fixed": "#ffdad6",
+                        "on-primary-container": "#ffcdc7",
+                        "tertiary-fixed-dim": "#c5c6c8",
+                        "surface-variant": "#dce2f3",
+                        "outline": "#8f6f6c",
+                        "on-primary-fixed-variant": "#93000b",
+                        "on-secondary": "#ffffff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "container-max": "1440px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "xl": "40px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "md": "16px",
+                        "gutter": "24px"
+                    },
+                    fontFamily: {
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-bold": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "data-mono": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    },
+                    fontSize: {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "data-mono": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        };
+    </script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+        .clinical-shadow { box-shadow: 0px 4px 12px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center h-16 px-gutter w-full max-w-container-max mx-auto z-50 relative">
+<div class="flex items-center gap-md">
+<span class="text-headline-lg font-headline-lg text-primary tracking-tight">MALARIA</span>
+
+</div>
+<div class="flex items-center gap-lg">
+
+<div class="flex gap-md text-secondary">
+
+
+</div>
+</div>
+</header>
+<div class="flex flex-1 relative">
+<!-- SideNavBar -->
+
+<!-- Main Content -->
+<main class="flex-1 p-gutter md:p-xl max-w-container-max mx-auto overflow-y-auto bg-background">
+<div class="mb-lg">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Analisis</h1>
+<p class="font-body-md text-body-md text-secondary">Deteksi Plasmodium pada apusan darah tipis dari gambar menggunakan Machine Learning.</p>
+</div>
+<!-- Case Information (Hidden by default, shown via JS if analysis_type == 'report') -->
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<!-- Left Column: Input & Config -->
+<div class="lg:col-span-1 flex flex-col gap-lg">
+<!-- Image Input Zone -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md">
+<h3 class="font-label-bold text-label-bold text-secondary uppercase border-b border-outline-variant pb-2 mb-md">Gambar</h3>
+<div class="border-2 border-dashed border-outline-variant rounded-lg p-xl flex flex-col items-center justify-center text-center bg-surface hover:bg-surface-container-low transition-colors cursor-pointer mb-md group relative">
+<input accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="file-upload" multiple="" type="file">
+<span class="material-symbols-outlined text-[48px] text-tertiary-fixed-dim mb-4 group-hover:text-primary transition-colors">cloud_upload</span>
+<p class="font-headline-md text-headline-md text-on-surface mb-2" style="font-size: 18px; line-height: 24px;">Drag &amp; Drop Smears</p>
+<p class="font-body-sm text-body-sm text-secondary">or click to browse local files (PNG, JPG, TIFF)</p>
+</div>
+<button class="w-full bg-surface-container border border-outline-variant text-on-surface font-label-bold text-label-bold py-2 rounded-DEFAULT flex items-center justify-center gap-2 hover:bg-surface-container-high transition-colors mb-md">
+<span class="material-symbols-outlined text-[18px]">photo_camera</span><br></button>
+<div class="grid grid-cols-4 gap-2" id="thumbnail-preview">
+<!-- Thumbnails injected via JS -->
+<div class="w-full aspect-square bg-surface border border-outline-variant rounded-sm overflow-hidden opacity-50 hover:opacity-100 transition-opacity cursor-pointer"><img src="placeholder" data-alt="A small square thumbnail of a microscopic blood smear showing red blood cells on a white background, clinical setting." class="object-cover w-full h-full"></div><div class="w-full aspect-square bg-surface border border-outline-variant rounded-sm overflow-hidden opacity-50 hover:opacity-100 transition-opacity cursor-pointer"><img src="placeholder" data-alt="A small square thumbnail of a microscopic blood smear showing red blood cells on a white background, clinical setting." class="object-cover w-full h-full"></div><div class="w-full aspect-square bg-surface border border-outline-variant rounded-sm overflow-hidden opacity-50 hover:opacity-100 transition-opacity cursor-pointer"><img src="placeholder" data-alt="A small square thumbnail of a microscopic blood smear showing red blood cells on a white background, clinical setting." class="object-cover w-full h-full"></div></div>
+</div>
+<!-- Model Config -->
+
+</div>
+<!-- Right Column: Results -->
+<div class="lg:col-span-2">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md h-full flex flex-col">
+<div class="flex justify-between items-center border-b border-outline-variant pb-2 mb-md">
+<h3 class="font-label-bold text-label-bold text-secondary uppercase">Analysis Results</h3>
+<div class="flex gap-2">
+<span class="bg-surface-container-high px-2 py-1 rounded-full text-data-mono font-data-mono text-[10px] text-secondary">N=3</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto flex flex-col gap-md pr-2">
+<!-- Result Card 1 -->
+<div class="border border-outline-variant rounded-lg p-md hover:clinical-shadow transition-shadow bg-surface-bright">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-16 h-16 bg-surface-container border border-outline-variant rounded-DEFAULT overflow-hidden flex-shrink-0">
+<img class="object-cover w-full h-full" data-alt="A highly detailed microscopic view of a thin blood smear. Red blood cells are scattered across the field. One central cell shows clear signs of Plasmodium falciparum ring-stage infection with a prominent dark blue chromatin dot and faint blue cytoplasm ring. Bright, uniform microscope lighting, clinical diagnostic setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOf6P0Hgbyun1cp3uX7Y6n1QWCaVC90AgASGkJ6n3oiDmd-NiLp83GI1CPkd6q-n9KYvlRwLPlX4j1t_ubf5UoE24B7rzszFIDii4f76c9RvlDLWIYeVnHhbF9dPe8NAkTIHK32S2UgFhEz6k9Bm1l5KJqdPeDlmEjzBDZuk-BUT3DZ_ZWDyp_kPOFsqY48RX06ql_gGMT6X-5VboP3pO93_rAVce1V5_jEskGLfdgc6EkazDN0728Xw">
+</div>
+<div>
+<p class="font-data-mono text-data-mono text-secondary text-sm">slide_001_fov3.tiff</p>
+<h4 class="font-headline-md text-headline-md text-primary mt-1" style="font-size: 18px; line-height: 24px;">Plasmodium falciparum</h4>
+</div>
+</div>
+<span class="bg-error/10 text-error font-label-bold text-label-bold px-3 py-1 rounded-full border border-error/20">Alert</span>
+</div>
+<div class="mb-4">
+<div class="flex justify-between font-label-bold text-label-bold text-secondary mb-1">
+<span class="">Confidence</span>
+<span class="text-on-surface">94.2%</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 94.2%"></div>
+</div>
+</div>
+<div>
+<label class="block font-label-bold text-label-bold text-secondary mb-1">Clinician Notes</label>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-3 py-1 text-sm focus:border-primary focus:ring-0" placeholder="Add microscopic observation notes..." type="text">
+</div>
+</div>
+<!-- Result Card 2 -->
+<div class="border border-outline-variant rounded-lg p-md hover:clinical-shadow transition-shadow bg-surface-bright">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-16 h-16 bg-surface-container border border-outline-variant rounded-DEFAULT overflow-hidden flex-shrink-0">
+<img class="object-cover w-full h-full" data-alt="A highly detailed microscopic view of a healthy thin blood smear. Numerous biconcave red blood cells are evenly distributed. No parasites or inclusions are visible. The background is clear and well-lit with clinical microscope illumination." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnhxR65cwwDWUnJYJXFZmmlCrN-_DiGUNI6PQOSOnADZ3S1aWWy5IGkibSNXSxc5on2339PNb6GviNDkryTre5Zwi2Rj1M_-1APhhlyne6gjSK_tn7PyhLgwo3hE8N7ec9CFw8R8qq69ZM1BRvLDDntCTkA9JbEsvJzpZ1gnG0eSnLDHj1TlLnpAbv1AzhOZikty770VS6aGK6SDVCYYkIQvcXzTTZkpXXZLP8dXIO1tnUm82SNc9LUw">
+</div>
+<div>
+<p class="font-data-mono text-data-mono text-secondary text-sm">slide_001_fov4.tiff</p>
+<h4 class="font-headline-md text-headline-md text-on-surface mt-1" style="font-size: 18px; line-height: 24px;">Normal</h4>
+</div>
+</div>
+<span class="bg-secondary/10 text-secondary font-label-bold text-label-bold px-3 py-1 rounded-full border border-secondary/20">Stable</span>
+</div>
+<div class="mb-4">
+<div class="flex justify-between font-label-bold text-label-bold text-secondary mb-1">
+<span class="">Confidence</span>
+<span class="text-on-surface">98.1%</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full" style="width: 98.1%"></div>
+</div>
+</div>
+</div>
+<!-- Result Card 3 (Inconclusive) -->
+<div class="border border-outline-variant rounded-lg p-md hover:clinical-shadow transition-shadow bg-surface-bright relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-tertiary-container"></div>
+<div class="flex justify-between items-start mb-4 pl-2">
+<div class="flex items-center gap-3">
+<div class="w-16 h-16 bg-surface-container border border-outline-variant rounded-DEFAULT overflow-hidden flex-shrink-0 opacity-70">
+<img class="object-cover w-full h-full grayscale" data-alt="A poorly stained, blurry microscopic view of a blood smear with artifacts mimicking parasites, demonstrating a technically poor slide preparation in a clinical setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5XPfC8eQb9ZVruaUkFzqwPFuhZODQ13CgEi16QgNSH9tngVH9d9cfV8z5jOBUuHwLyhqMM0IPtBvR6aAdmQGF259kp6aKqCXBrfbsQZfaDg4wgYkpzQV4aKkqEo5RzJxMqdIWfzNO0OdlUPZVVhvi8NamC_-6xikNTI1Qry_sGmoQtKVsqInnZxp0yKUNmlYz0XUfukGcAdvE2l-NKj_TgR6JQiwMn35nQmYRxG7lcG4WWy4fI4BGfQ">
+</div>
+<div>
+<p class="font-data-mono text-data-mono text-secondary text-sm">slide_001_fov5.tiff</p>
+<h4 class="font-headline-md text-headline-md text-tertiary-container mt-1" style="font-size: 18px; line-height: 24px;">Inconclusive</h4>
+</div>
+</div>
+<span class="bg-tertiary/10 text-tertiary font-label-bold text-label-bold px-3 py-1 rounded-full border border-tertiary/20">Review</span>
+</div>
+<div class="mb-4 pl-2">
+<div class="flex justify-between font-label-bold text-label-bold text-secondary mb-1">
+<span class="">Confidence (P. vivax)</span>
+<span class="text-tertiary-container">62.4% &lt; (70%)</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary-container h-full" style="width: 62.4%"></div>
+</div>
+<p class="font-body-sm text-body-sm text-error mt-2">Below diagnostic threshold. Manual microscopy required.</p>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container-high border-t border-outline-variant flex flex-col md:flex-row justify-between items-center px-gutter py-md w-full relative z-50">
+<span class="font-label-bold text-label-bold text-on-surface mb-2 md:mb-0"><span style="letter-spacing: 0.6px;">© MESENTERICA: MALARIA</span><br></span>
+<div class="flex gap-4">
+
+<a class="font-label-bold text-label-bold text-on-surface-variant hover:text-primary transition-all cursor-help" href="#">Daftar Pustaka</a>
+
+
+</div>
+</footer>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mock localStorage check
+            const analysisType = 'report'; // localStorage.getItem('analysis_type') || 'report';
+            
+            if (analysisType === 'report') {
+                document.getElementById('case-info-section').classList.remove('hidden');
+                document.getElementById('report-action-area').classList.remove('hidden');
+            }
+
+            // Thumbnail mock injection
+            const thumbContainer = document.getElementById('thumbnail-preview');
+            for(let i=0; i<3; i++) {
+                const div = document.createElement('div');
+                div.className = 'w-full aspect-square bg-surface border border-outline-variant rounded-sm overflow-hidden opacity-50 hover:opacity-100 transition-opacity cursor-pointer';
+                div.innerHTML = `<img src="placeholder" data-alt="A small square thumbnail of a microscopic blood smear showing red blood cells on a white background, clinical setting." class="object-cover w-full h-full">`;
+                thumbContainer.appendChild(div);
+            }
+        });
+    </script>
+
+
+</body></html>
