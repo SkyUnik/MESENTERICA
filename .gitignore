@@ -1,2 +1,3 @@
 .DS_Store
 tmp/
+model_backup_*/
