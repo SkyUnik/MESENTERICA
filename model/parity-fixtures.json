@@ -8,6 +8,7 @@
   "aggregationCases": [
     {"id": "zero_boxes", "acceptedClasses": [], "expectedOutcome": "no_parasite_detected"},
     {"id": "artifact_only", "acceptedClasses": [], "rejectedClasses": ["non_parasite", "non_parasite"], "expectedOutcome": "species_uncertain"},
+    {"id": "concordant_rejected_ovale", "acceptedClasses": [], "rejectedClasses": ["ovale", "ovale"], "expectedOutcome": "species_uncertain", "expectedEvidenceMode": "provisional", "expectedPrimarySpecies": "ovale"},
     {"id": "single_falciparum", "acceptedClasses": ["falciparum"], "expectedOutcome": "species_uncertain"},
     {"id": "concordant_vivax", "acceptedClasses": ["vivax", "vivax"], "expectedOutcome": "suspected_species"},
     {"id": "weak_conflict", "acceptedClasses": ["falciparum", "falciparum", "vivax"], "expectedOutcome": "suspected_species"},

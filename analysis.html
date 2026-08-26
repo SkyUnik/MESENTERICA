@@ -6,10 +6,10 @@
     <meta name="theme-color" content="#9f151c">
     <meta name="description" content="Prototipe analisis lokal citra apusan darah tipis untuk membantu tinjauan klinis malaria.">
     <title>Analisis Apusan Darah | MESENTERICA</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20260826.4">
     <script type="importmap">{"imports":{"@litertjs/wasm-utils":"./vendor/litert/wasm-utils.js"}}</script>
-    <script src="clinical-guidance.js" defer></script>
-    <script src="analysis.js" type="module"></script>
+    <script src="clinical-guidance.js?v=20260826.4" defer></script>
+    <script src="analysis.js?v=20260826.4" type="module"></script>
   </head>
   <body data-analysis-mode="quick">
     <header class="site-header">
@@ -190,11 +190,18 @@
               </section>
             </div>
             <details class="threshold-box">
-              <summary>Pengaturan analisis terkunci</summary>
+              <summary>Atur sensitivitas detector</summary>
               <div class="threshold-content">
-                <label><span>Threshold versi model</span><strong id="threshold-value">Terkalibrasi</strong></label>
-                <input id="threshold" type="range" min="0" max="1" value="0" hidden disabled>
-                <p>Detector menggunakan threshold 0,073152 dan classifier memakai threshold per kelas dari metadata. Nilai tidak dapat diubah agar keputusan agregasi tetap reproducible.</p>
+                <label for="threshold"><span>Threshold detector</span><strong id="threshold-value">Memuat…</strong></label>
+                <input id="threshold" type="range" min="0.01" max="0.5" step="0.000001" value="0.073152" autocomplete="off" disabled>
+                <div class="threshold-actions">
+                  <span>Lebih rendah = lebih sensitif</span>
+                  <span class="threshold-buttons">
+                    <button id="threshold-reset" type="button">Kembali ke default</button>
+                    <button id="threshold-save" type="button">Simpan threshold</button>
+                  </span>
+                </div>
+                <p>Default model adalah 0,073152. Kasus aktif dihitung ulang otomatis setelah slider berhenti digeser. Tombol simpan memakai nilai ini sebagai pilihan awal pada kunjungan berikutnya. Threshold classifier per kelas tetap menggunakan metadata terkalibrasi.</p>
               </div>
             </details>
           </div>

@@ -1,14 +1,16 @@
-import { loadTwoStage } from './yolo-inference.js';
+import { loadTwoStage } from './yolo-inference.js?v=20260826.4';
 
 (() => {
   'use strict';
 
-  const MANIFEST_URL = new URL('model/manifest.json', document.baseURI).href;
+  const MANIFEST_URL = new URL('model/manifest.json?v=20260826.4', document.baseURI).href;
   const MAX_FILE_SIZE = 10 * 1024 * 1024;
   const STORAGE_KEY = 'mesenterica.currentBatch.v2';
   const LEGACY_STORAGE_KEY = 'mesenterica.currentCase.v1';
   const CAPACITY_PROBE_KEY = 'mesenterica.capacityProbe';
+  const SAVED_THRESHOLD_KEY = 'mesenterica.detectorThreshold.v1';
   const LIVE_INTERVAL_MS = 200;
+  const THRESHOLD_RERUN_DELAY_MS = 350;
   const REPORT_PREVIEW_MAX_DIMENSION = 1400;
   const REPORT_PREVIEW_FALLBACK_DIMENSION = 1000;
   const REPORT_PREVIEW_MAX_DATA_LENGTH = 2500000;
@@ -50,7 +52,7 @@ import { loadTwoStage } from './yolo-inference.js';
     suggestionLabel: document.getElementById('suggestion-label'), suggestionTitle: document.getElementById('suggestion-title'),
     suggestionDetail: document.getElementById('suggestion-detail'), resultConfidence: document.getElementById('result-confidence'),
     probabilityList: document.getElementById('probability-list'), analysisDuration: document.getElementById('analysis-duration'),
-    threshold: document.getElementById('threshold'), thresholdValue: document.getElementById('threshold-value'),
+    threshold: document.getElementById('threshold'), thresholdValue: document.getElementById('threshold-value'), thresholdReset: document.getElementById('threshold-reset'), thresholdSave: document.getElementById('threshold-save'),
     detectionCard: document.getElementById('detection-status-card'), detectionTitle: document.getElementById('detection-status-title'),
     detectionDescription: document.getElementById('detection-status-description'), analysisGuidance: document.getElementById('analysis-guidance'),
     guidanceTitle: document.getElementById('analysis-guidance-title'), guidanceSummary: document.getElementById('analysis-guidance-summary'),
@@ -80,6 +82,11 @@ import { loadTwoStage } from './yolo-inference.js';
   let batchExaminer = '';
   let renderingDocumentation = false;
   let previewRenderToken = 0;
+  let detectorThresholdDefault = 0.073152;
+  let savedDetectorThreshold = null;
+  let thresholdRerunTimer = 0;
+  let thresholdRerunToken = 0;
+  let thresholdReprocessing = false;
 
   function configureMode() {
     const mode = new URLSearchParams(window.location.search).get('mode') === 'report' ? 'report' : 'quick';
@@ -106,10 +113,37 @@ import { loadTwoStage } from './yolo-inference.js';
   }
   function hideAlert() { elements.alert.hidden = true; elements.retry.hidden = true; elements.alertText.textContent = ''; }
 
+  function formatThreshold(value) { return Number(value).toFixed(6).replace('.', ','); }
+  function updateThresholdDisplay() {
+    const current = Number(elements.threshold.value); const isDefault = Math.abs(current - detectorThresholdDefault) < 1e-9;
+    const isSaved = Number.isFinite(savedDetectorThreshold) && Math.abs(current - savedDetectorThreshold) < 1e-9;
+    elements.thresholdValue.textContent = `${formatThreshold(current)}${isSaved ? ' · tersimpan' : (isDefault ? ' · default' : ' · belum disimpan')}`;
+    elements.thresholdReset.disabled = isDefault || elements.threshold.disabled;
+    elements.thresholdSave.disabled = isSaved || elements.threshold.disabled;
+  }
+  function loadSavedThreshold() {
+    try {
+      const value = Number(localStorage.getItem(SAVED_THRESHOLD_KEY));
+      return Number.isFinite(value) && value >= Number(elements.threshold.min) && value <= Number(elements.threshold.max) ? value : null;
+    } catch { return null; }
+  }
+  function configureThreshold(metadata) {
+    detectorThresholdDefault = Number(metadata?.detector?.candidateThreshold || 0.073152);
+    savedDetectorThreshold = loadSavedThreshold();
+    elements.threshold.value = String(savedDetectorThreshold ?? detectorThresholdDefault); elements.threshold.disabled = false; updateThresholdDisplay();
+  }
+  function saveThresholdPreference() {
+    const current = Number(elements.threshold.value);
+    try {
+      localStorage.setItem(SAVED_THRESHOLD_KEY, String(current)); savedDetectorThreshold = current; updateThresholdDisplay();
+      setBatchStatus(`Threshold detector ${formatThreshold(current)} disimpan untuk kunjungan berikutnya.`);
+    } catch { showAlert('Threshold tidak dapat disimpan oleh browser ini. Nilainya tetap berlaku selama halaman masih terbuka.'); }
+  }
+
   async function loadModel() {
     hideAlert(); setModelState('loading', 'Memuat model lokal…');
     modelPromise = loadTwoStage(MANIFEST_URL).then((loadedModel) => {
-      model = loadedModel; modelMetadata = loadedModel.metadata;
+      model = loadedModel; modelMetadata = loadedModel.metadata; configureThreshold(modelMetadata);
       const runtime = loadedModel.runtime.mixedExecution ? `${loadedModel.runtime.accelerator}+WASM` : loadedModel.runtime.accelerator;
       setModelState('ready', `LiteRT siap · ${runtime} · detector + 6 kelas`); return loadedModel;
     }).catch((error) => {
@@ -138,12 +172,13 @@ import { loadTwoStage } from './yolo-inference.js';
     catch { URL.revokeObjectURL(objectUrl); throw new Error('Berkas tidak dapat dibaca sebagai gambar yang valid.'); }
   }
   function mapPredictions(systemResult) {
-    const mapped = LABELS.map((definition) => ({ ...definition, score: Number(systemResult.speciesEvidence?.[definition.id] || 0) }));
+    const evidence = systemResult.displaySpeciesEvidence || systemResult.speciesEvidence;
+    const mapped = LABELS.map((definition) => ({ ...definition, score: Number(evidence?.[definition.id] || 0) }));
     if (mapped.some((item) => !Number.isFinite(item.score) || item.score < 0 || item.score > 1)) throw new Error('Keluaran evidence spesies tidak valid.');
     return mapped;
   }
   async function predictSource(source) {
-    const systemResult = await (model || await modelPromise).predict(source);
+    const systemResult = await (model || await modelPromise).predict(source, { candidateThreshold: Number(elements.threshold.value) });
     return { results: mapPredictions(systemResult), systemResult, detections: systemResult.cells };
   }
 
@@ -189,7 +224,7 @@ import { loadTwoStage } from './yolo-inference.js';
       const analysedAt = new Date().toISOString();
       return { caseKey: makeCaseKey(sequence), sequence,
         image: { filename: file.name || `kamera-${sequence}.jpg`, mimeType: file.type, width, height, size: file.size, reportPreview: makeReportPreview(image, prediction.detections) },
-        results, systemResult: prediction.systemResult, analysedAt, duration: Math.round(performance.now() - startedAt), origin: source, documentation: makeDocumentation(results, prediction.systemResult, analysedAt, sequence) };
+        sourceFile: file, results, systemResult: prediction.systemResult, analysedAt, duration: Math.round(performance.now() - startedAt), origin: source, documentation: makeDocumentation(results, prediction.systemResult, analysedAt, sequence) };
     } finally { URL.revokeObjectURL(objectUrl); }
   }
   function renderCapturedGallery() {
@@ -217,20 +252,52 @@ import { loadTwoStage } from './yolo-inference.js';
   }
   async function handleFiles(fileList, source = 'upload') {
     const files = Array.from(fileList || []); if (!files.length || processingFiles) return;
-    processingFiles = true; hideAlert(); setResultView('loading'); elements.captureImage.disabled = true;
+    processingFiles = true; hideAlert(); setResultView('loading'); elements.captureImage.disabled = true; elements.threshold.disabled = true; updateThresholdDisplay();
     const failures = []; let accepted = 0;
     for (let index = 0; index < files.length; index += 1) {
       const file = files[index]; setBatchStatus(`Memproses gambar ${index + 1} dari ${files.length}: ${file.name || 'gambar kamera'}…`);
       try { await addFileAsCase(file, source); accepted += 1; }
       catch (error) { failures.push(`${file.name || 'Gambar'}: ${error.message}`); if (error.message.includes('Kapasitas penyimpanan')) break; }
     }
-    processingFiles = false; elements.captureImage.disabled = false; elements.fileInput.value = ''; elements.cameraInput.value = '';
+    processingFiles = false; elements.captureImage.disabled = false; elements.threshold.disabled = false; updateThresholdDisplay(); elements.fileInput.value = ''; elements.cameraInput.value = '';
     setBatchStatus(`${accepted} gambar ditambahkan · ${cases.length} kasus dalam batch${failures.length ? ` · ${failures.length} ditolak` : ''}.`);
     if (failures.length) showAlert(failures.join(' '));
     if (!cameraStream) { if (cases.length) renderActiveCase(); else setResultView('empty'); }
   }
 
   function getActiveCase() { return activeCaseIndex >= 0 ? cases[activeCaseIndex] : null; }
+  function scheduleThresholdRerun() {
+    window.clearTimeout(thresholdRerunTimer); thresholdRerunToken += 1;
+    if (cameraStream) { setBatchStatus(`Threshold ${formatThreshold(elements.threshold.value)} langsung dipakai pada prediksi kamera berikutnya.`); return; }
+    const activeCase = getActiveCase();
+    if (!activeCase?.sourceFile) { setBatchStatus(`Threshold ${formatThreshold(elements.threshold.value)} akan dipakai pada analisis berikutnya.`); return; }
+    const token = thresholdRerunToken;
+    setBatchStatus(`Threshold ${formatThreshold(elements.threshold.value)} dipilih. Menunggu slider berhenti…`);
+    thresholdRerunTimer = window.setTimeout(() => { void reprocessActiveCase(token); }, THRESHOLD_RERUN_DELAY_MS);
+  }
+  async function reprocessActiveCase(token) {
+    const activeCase = getActiveCase();
+    if (!activeCase?.sourceFile || processingFiles || thresholdReprocessing || token !== thresholdRerunToken) return;
+    const caseKey = activeCase.caseKey; thresholdReprocessing = true; elements.threshold.disabled = true; updateThresholdDisplay();
+    setBatchStatus(`Menghitung ulang ${activeCase.image.filename} dengan threshold ${formatThreshold(elements.threshold.value)}…`);
+    const startedAt = performance.now(); let objectUrl = '';
+    try {
+      const loaded = await loadImageFromFile(activeCase.sourceFile); objectUrl = loaded.objectUrl;
+      const prediction = await predictSource(loaded.image);
+      if (token !== thresholdRerunToken || getActiveCase()?.caseKey !== caseKey) return;
+      activeCase.results = prediction.results; activeCase.systemResult = prediction.systemResult;
+      activeCase.duration = Math.round(performance.now() - startedAt); activeCase.analysedAt = new Date().toISOString();
+      activeCase.image.reportPreview = makeReportPreview(loaded.image, prediction.detections);
+      if (!activeCase.documentation.conclusionWasEdited) activeCase.documentation.clinicianConclusion = defaultConclusion(activeCase.results, activeCase.systemResult);
+      sessionStorage.removeItem(STORAGE_KEY); renderActiveCase();
+      setBatchStatus(`Kasus aktif diperbarui dengan threshold ${formatThreshold(elements.threshold.value)}.`);
+    } catch (error) {
+      showAlert(`Kasus tidak dapat dihitung ulang. ${error.message || 'Coba pilih gambar kembali.'}`);
+    } finally {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      thresholdReprocessing = false; elements.threshold.disabled = false; updateThresholdDisplay();
+    }
+  }
   function getPresentationSummary(results, systemResult) {
     if (!results) return null; const top = resultsTop(results); const detection = detectionForSystem(systemResult);
     return { top, detection, title: systemResult?.outcome?.message || 'Tinjauan manual diperlukan', detail: systemResult?.outcome?.reason || detection.description };
@@ -253,10 +320,12 @@ import { loadTwoStage } from './yolo-inference.js';
     elements.resultOutput.classList.remove('is-review', 'is-normal', 'is-suspect', 'is-confident', 'is-less-confident', 'is-not-confident'); elements.resultOutput.classList.add(summary.detection.className);
     elements.suggestionLabel.textContent = isLive ? 'Pratinjau kamera · belum disimpan' : 'Indikasi model'; elements.suggestionTitle.textContent = summary.title;
     elements.suggestionDetail.textContent = isLive ? `${summary.detail} Tekan “Capture Gambar” untuk menyimpan frame ini sebagai kasus.` : summary.detail;
-    elements.resultConfidence.textContent = `${systemResult?.counts?.acceptedSpeciesCells || 0} sel diterima`;
+    const acceptedCells = systemResult?.counts?.acceptedSpeciesCells || 0; const candidateCells = systemResult?.counts?.candidateSpeciesCells || 0;
+    elements.resultConfidence.textContent = acceptedCells ? `${acceptedCells} sel diterima` : (candidateCells ? `${candidateCells} kandidat spesies · belum diterima` : '0 sel diterima');
     if (!isLive) elements.reviewModelSuggestion.textContent = summary.title;
     const runtime = systemResult?.runtime?.accelerator ? ` · ${systemResult.runtime.accelerator}` : '';
-    elements.analysisDuration.textContent = isLive ? `Prediksi live lokal${runtime}` : `Kasus ${activeCaseIndex + 1} dari ${cases.length} · diproses ${duration} ms${runtime}`;
+    const appliedThreshold = systemResult?.thresholds?.detectorCandidate; const thresholdText = Number.isFinite(appliedThreshold) ? ` · threshold ${formatThreshold(appliedThreshold)}` : '';
+    elements.analysisDuration.textContent = isLive ? `Prediksi live lokal${runtime}${thresholdText}` : `Kasus ${activeCaseIndex + 1} dari ${cases.length} · diproses ${duration} ms${runtime}${thresholdText}`;
     elements.probabilityList.replaceChildren();
     sorted.forEach((item, index) => {
       const row = document.createElement('div'); row.className = `probability-row${index === 0 ? ' is-top' : ''}`;
@@ -414,6 +483,7 @@ import { loadTwoStage } from './yolo-inference.js';
     finally { elements.captureImage.disabled = false; window.setTimeout(() => { if (cameraStream) livePredictionPaused = false; }, 600); }
   }
   function resetAnalysis() {
+    window.clearTimeout(thresholdRerunTimer); thresholdRerunToken += 1; thresholdReprocessing = false;
     stopCamera(false); cases = []; activeCaseIndex = -1; caseSequence = 0; batchCreatedAt = new Date().toISOString(); batchExaminer = ''; elements.fileInput.value = ''; elements.cameraInput.value = '';
     lastLiveResults = null; lastLiveSystemResult = null; livePredictionPaused = false;
     previewRenderToken += 1; elements.selectedImage.width = 1; elements.selectedImage.height = 1; elements.selectedFilename.textContent = ''; elements.selectedFilemeta.textContent = ''; elements.imageSelection.hidden = true; elements.dropZone.hidden = false;
@@ -428,6 +498,9 @@ import { loadTwoStage } from './yolo-inference.js';
     elements.removeCase.addEventListener('click', removeActiveCase); elements.resetAnalysis.addEventListener('click', resetAnalysis); elements.captureImage.addEventListener('click', captureCameraFrame); elements.closeCamera.addEventListener('click', () => stopCamera(true));
     elements.autofillAll.addEventListener('click', openAutofillDialog); elements.cancelAutofill.addEventListener('click', () => elements.autofillDialog.close()); elements.confirmAutofill.addEventListener('click', confirmAutofill);
     elements.fileInput.addEventListener('change', () => handleFiles(elements.fileInput.files)); elements.cameraInput.addEventListener('change', () => handleFiles(elements.cameraInput.files, 'camera-fallback'));
+    elements.threshold.addEventListener('input', () => { updateThresholdDisplay(); scheduleThresholdRerun(); });
+    elements.thresholdReset.addEventListener('click', () => { elements.threshold.value = String(detectorThresholdDefault); updateThresholdDisplay(); scheduleThresholdRerun(); });
+    elements.thresholdSave.addEventListener('click', saveThresholdPreference);
     elements.dropZone.addEventListener('click', (event) => { if (!event.target.closest('button')) openFilePicker(); });
     elements.dropZone.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openFilePicker(); } });
     ['dragenter', 'dragover'].forEach((eventName) => elements.dropZone.addEventListener(eventName, (event) => { event.preventDefault(); elements.dropZone.classList.add('is-dragging'); }));

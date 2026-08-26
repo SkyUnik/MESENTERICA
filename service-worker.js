@@ -1,7 +1,7 @@
-const CACHE_NAME = 'mesenterica-litert-2026-08-26-v5';
+const CACHE_NAME = 'mesenterica-litert-2026-08-26-v9';
 const LOCAL_ASSETS = [
-  './', './index.html', './analysis.html', './analysis.js', './yolo-inference.js', './clinical-guidance.js',
-  './report.html', './report-state.js', './styles.css', './model/manifest.json', './model/checksums.sha256', './model/parity-fixtures.json',
+  './', './index.html', './analysis.html', './analysis.js?v=20260826.4', './yolo-inference.js?v=20260826.4', './clinical-guidance.js?v=20260826.4',
+  './report.html', './report-state.js?v=20260826.4', './styles.css?v=20260826.4', './model/manifest.json?v=20260826.4', './model/checksums.sha256', './model/parity-fixtures.json',
   './model/detector/model.tflite', './model/detector/metadata.json', './model/classifier/model.tflite', './model/classifier/metadata.json',
   './vendor/litert/litert-core.js', './vendor/litert/wasm-utils.js',
   './vendor/litert/wasm/litert_wasm_compat_internal.js', './vendor/litert/wasm/litert_wasm_compat_internal.wasm',

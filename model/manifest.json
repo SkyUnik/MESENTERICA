@@ -1,6 +1,6 @@
 {
   "schemaVersion": "mesenterica-litert-manifest-v3",
-  "manifestVersion": "2026.08.26-local.1",
+  "manifestVersion": "2026.08.26-local.4",
   "runtime": {"name": "LiteRT.js", "version": "2.5.0", "preferredAccelerator": "webgpu", "fallbackAccelerator": "wasm", "webnnEnabled": false},
   "detector": {
     "model": "detector/model.tflite",
@@ -14,7 +14,7 @@
     "sha256": "54c85f3ffbff2e4fae667e502d9f1f71bff28b2153ab7fc7e48b07990193fb8f",
     "bytes": 6213550
   },
-  "aggregationVersion": "two-stage-locked-rules-v2",
+  "aggregationVersion": "two-stage-provisional-evidence-v3",
   "clinicalStatus": "research_prototype_not_release_ready",
   "challengePolicy": "challenge images are test-only and were not used to select this manifest"
 }

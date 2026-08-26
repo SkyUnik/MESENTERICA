@@ -10,7 +10,9 @@ Inferensi produksi memakai Google LiteRT.js 2.5.0 tanpa TensorFlow.js:
 2. YOLO11n-cls menilai crop 224×224 sebagai lima spesies atau `non_parasite`.
 3. Agregator mengeluarkan `no_parasite_detected`, `species_uncertain`, `suspected_species`, atau `suspected_mixed`.
 
-WebGPU dipilih terlebih dahulu dan LiteRT WASM menjadi fallback. WebNN sengaja tidak diaktifkan. Threshold detector dan classifier berasal dari metadata versi model dan tidak dapat diubah dari UI. `non_parasite` menolak false-positive detector; aplikasi tidak lagi menghitung atau menampilkan `Normal = 1 - confidence`.
+WebGPU dipilih terlebih dahulu dan LiteRT WASM menjadi fallback. WebNN sengaja tidak diaktifkan. Threshold detector dimulai dari default metadata `0,073152`. Perubahan slider menghitung ulang kasus aktif setelah jeda singkat, nilai aktual dicatat bersama setiap kasus, dan tombol simpan dapat mempertahankan pilihan threshold di browser untuk kunjungan berikutnya. Threshold classifier per kelas tetap berasal dari metadata. `non_parasite` menolak false-positive detector; aplikasi tidak lagi menghitung atau menampilkan `Normal = 1 - confidence`.
+
+Jika seluruh prediksi spesies ditolak tetapi sedikitnya dua kandidat memberi kelas yang sama, aplikasi menampilkan evidence provisional dan pesan `Indikasi mengarah ke Plasmodium …—belum tervalidasi`. Kandidat tersebut tetap tidak dihitung sebagai sel spesies yang diterima dan outcome tetap `species_uncertain`.
 
 ## Menjalankan lokal
 

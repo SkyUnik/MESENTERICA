@@ -1539,6 +1539,42 @@ summary:focus-visible {
   font-size: 11px;
 }
 
+.threshold-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 10px;
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.threshold-actions button {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--red);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.threshold-actions button:disabled {
+  color: var(--ink-soft);
+  cursor: default;
+  opacity: 0.55;
+}
+
+.threshold-buttons {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 .report-section {
   margin-top: 18px;
 }
