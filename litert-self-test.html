@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>MESENTERICA LiteRT self-test</title><script type="importmap">{"imports":{"@litertjs/wasm-utils":"./vendor/litert/wasm-utils.js"}}</script></head>
+<body><pre id="result">running</pre><script type="module">
+import { loadTwoStage } from './yolo-inference.js';
+const params = new URLSearchParams(location.search); const forceAccelerator = params.get('accelerator') === 'wasm' ? 'wasm' : undefined;
+const canvas = document.createElement('canvas'); canvas.width = 640; canvas.height = 640;
+const context = canvas.getContext('2d'); context.fillStyle = '#787878'; context.fillRect(0, 0, 640, 640);
+const output = document.getElementById('result'); const samples = [];
+try {
+  const model = await loadTwoStage(new URL('model/manifest.json', document.baseURI).href, { forceAccelerator });
+  let steadyBaseline = null;
+  for (let index = 0; index < 25; index += 1) { const started = performance.now(); const result = await model.predict(canvas); samples.push({ milliseconds: performance.now() - started, outcome: result.outcome.code, boxes: result.detectorBoxes.length }); if (index === 0) { await new Promise((resolve) => setTimeout(resolve, 1000)); steadyBaseline = performance.memory?.usedJSHeapSize ?? null; } }
+  await new Promise((resolve) => setTimeout(resolve, 10000));
+  const after = performance.memory?.usedJSHeapSize ?? null; const resources = performance.getEntriesByType('resource').map((item) => item.name); const external = resources.filter((url) => new URL(url).origin !== location.origin);
+  const sorted = samples.map((item) => item.milliseconds).sort((a, b) => a - b);
+  output.textContent = JSON.stringify({ pass: samples.length === 25 && external.length === 0, runtime: model.runtime, runs: samples.length, medianMilliseconds: sorted[12], first: samples[0], last: samples.at(-1), steadyHeapAfterFirstRun: steadyBaseline, heapAfterIdle: after, retainedHeapGrowthBytes: steadyBaseline === null || after === null ? null : after - steadyBaseline, externalRequests: external, serviceWorkerControlled: Boolean(navigator.serviceWorker?.controller) }, null, 2);
+  model.dispose();
+} catch (error) { output.textContent = JSON.stringify({ pass: false, error: error.stack || error.message || String(error) }, null, 2); }
+</script></body></html>

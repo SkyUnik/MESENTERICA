@@ -21,6 +21,24 @@
   });
 
   const GUIDANCE = Object.freeze({
+    review: Object.freeze({
+      title: 'Tinjau kandidat sel dan hasil classifier secara manual',
+      summary: 'Evidence sistem belum memenuhi aturan minimum untuk pelaporan spesies. Jangan menetapkan spesies dari kelas dengan skor tertinggi saja.',
+      points: Object.freeze([
+        'Tinjau setiap bounding box, kualitas crop, temuan artefak, dan kecukupan lapang pandang.',
+        'Konfirmasi keberadaan parasit, stadium, spesies, dan densitas melalui mikroskopi sesuai prosedur laboratorium.',
+        'Ulangi akuisisi atau gunakan pemeriksaan rujukan bila citra tidak memadai atau bukti saling bertentangan.'
+      ])
+    }),
+    no_parasite_detected: Object.freeze({
+      title: 'Tidak ada box bukan berarti diagnosis malaria negatif',
+      summary: 'Detector tidak menemukan kandidat parasit pada citra ini, tetapi parasitemia rendah, kualitas citra, atau lapang pandang yang tidak representatif tetap dapat menyebabkan parasit terlewat.',
+      points: Object.freeze([
+        'Jika kecurigaan klinis tetap ada, lanjutkan pemeriksaan mikroskopis dan/atau RDT sesuai pedoman.',
+        'Tinjau preparat tipis dan tebal, kualitas pewarnaan, fokus, serta kecukupan lapang pandang.',
+        'Jangan menuliskan “Normal” atau menyingkirkan malaria hanya dari keluaran ini.'
+      ])
+    }),
     normal: Object.freeze({
       title: 'Hasil model Normal tidak menyingkirkan malaria',
       summary: 'Indikator Normal berarti tidak ada parasit yang terdeteksi oleh YOLO, tetapi densitas parasit rendah, kualitas citra, atau lapang pandang yang tidak representatif tetap dapat memengaruhi hasil.',
@@ -93,8 +111,8 @@
   }
 
   function getGuidance(top, detectionStatus) {
-    const base = GUIDANCE[top.id] || GUIDANCE.normal;
-    const uncertainty = detectionStatus.id === 'confident' ? '' : `${detectionStatus.label}: kelas ${top.label} hanya merupakan keluaran tertinggi dan tidak boleh ditetapkan sebagai spesies tanpa konfirmasi. `;
+    const base = GUIDANCE[top.id] || GUIDANCE.review;
+    const uncertainty = detectionStatus.id === 'confident' || ['review', 'no_parasite_detected'].includes(top.id) ? '' : `${detectionStatus.label}: kelas ${top.label} hanya merupakan keluaran tertinggi dan tidak boleh ditetapkan sebagai spesies tanpa konfirmasi. `;
     return Object.freeze({ title: base.title, summary: `${uncertainty}${base.summary}`, points: base.points });
   }
 

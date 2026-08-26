@@ -76,16 +76,15 @@
             </div>
             <div class="report-result-score">
               <strong id="report-top-score">—</strong>
-              <span>Skor tertinggi</span>
+              <span>Dukungan sel</span>
             </div>
           </section>
 
           <section class="report-detection-legend report-avoid-break" aria-labelledby="report-detection-legend-title">
             <h3 id="report-detection-legend-title">Legenda status deteksi</h3>
             <div class="detection-legend">
-              <span class="legend-confident"><i></i><b>Yakin</b> ≥ threshold</span>
-              <span class="legend-less"><i></i><b>Kurang Yakin</b> 50%–threshold</span>
-              <span class="legend-not"><i></i><b>Tidak Yakin</b> &lt;50%</span>
+              <span class="legend-confident"><i></i><b>Suspek</b> didukung ≥2 sel concordant</span>
+              <span class="legend-not"><i></i><b>Tinjau manual</b> untuk negatif, satu sel, ditolak, atau konflik</span>
             </div>
             <p>Warna menggambarkan keyakinan keluaran model dan bukan kepastian diagnosis atau tingkat keparahan pasien.</p>
           </section>
@@ -116,12 +115,12 @@
             <div class="report-section-heading">
               <div>
                 <p>02 · Keluaran model</p>
-                <h3 id="report-probability-title">Confidence deteksi YOLO</h3>
+                <h3 id="report-probability-title">Evidence agregat spesies</h3>
               </div>
               <span>Nilai tidak diubah</span>
             </div>
             <div class="report-probability-list" id="report-probability-list"></div>
-            <p class="report-section-note">Skor spesies adalah confidence deteksi YOLO. Skor Normal menunjukkan tidak ada parasit terdeteksi; skor bukan ukuran kepastian diagnosis klinis.</p>
+            <p class="report-section-note">Evidence spesies berasal dari sistem dua tahap dan bukan probabilitas diagnosis klinis. Arsip lama tetap ditampilkan sesuai skema asalnya.</p>
           </section>
 
           <section class="report-analysis-section report-avoid-break" aria-labelledby="report-clinician-title">

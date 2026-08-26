@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "mesenterica-model-metadata-v3",
+  "modelName": "YOLO11n six-class malaria crop classifier v2",
+  "modelVersion": "classifier-v2-sixclass-fp32-litert",
+  "task": "classify",
+  "classNames": ["falciparum", "knowlesi", "malariae", "non_parasite", "ovale", "vivax"],
+  "input": {"shape": [1, 3, 224, 224], "layout": "NCHW", "dtype": "float32", "range": [0, 1]},
+  "output": {"shape": [1, 6], "layout": "NC", "dtype": "float32", "values": "uncalibrated_probabilities"},
+  "cropSize": 224,
+  "cropContextRatio": 0.2,
+  "minimumHostCellSideRatio": 0.055,
+  "temperature": 1.1813728788230575,
+  "acceptanceThresholds": {
+    "falciparum": 0.435922,
+    "knowlesi": 0.3,
+    "malariae": 0.3,
+    "non_parasite": 0.3,
+    "ovale": 1.0,
+    "vivax": 0.40861
+  },
+  "thresholdStatus": "provisional_group_safe_validation",
+  "ovalePolicy": "always reject pending adequate held-out performance"
+}

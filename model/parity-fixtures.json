@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "mesenterica-parity-fixtures-v1",
+  "purpose": "Deterministic aggregation and browser schema checks; no challenge image is included",
+  "tensorContracts": {
+    "detector": {"input": [1, 3, 640, 640], "output": [1, 5, 8400], "dtype": "float32"},
+    "classifier": {"input": [1, 3, 224, 224], "output": [1, 6], "dtype": "float32", "classOrder": ["falciparum", "knowlesi", "malariae", "non_parasite", "ovale", "vivax"]}
+  },
+  "aggregationCases": [
+    {"id": "zero_boxes", "acceptedClasses": [], "expectedOutcome": "no_parasite_detected"},
+    {"id": "artifact_only", "acceptedClasses": [], "rejectedClasses": ["non_parasite", "non_parasite"], "expectedOutcome": "species_uncertain"},
+    {"id": "single_falciparum", "acceptedClasses": ["falciparum"], "expectedOutcome": "species_uncertain"},
+    {"id": "concordant_vivax", "acceptedClasses": ["vivax", "vivax"], "expectedOutcome": "suspected_species"},
+    {"id": "weak_conflict", "acceptedClasses": ["falciparum", "falciparum", "vivax"], "expectedOutcome": "suspected_species"},
+    {"id": "mixed", "acceptedClasses": ["falciparum", "falciparum", "vivax", "vivax"], "expectedOutcome": "suspected_mixed"}
+  ]
+}

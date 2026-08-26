@@ -7,6 +7,10 @@
     ['normal', 'Normal'], ['vivax', 'Plasmodium vivax'], ['knowlesi', 'Plasmodium knowlesi'],
     ['ovale', 'Plasmodium ovale'], ['malariae', 'Plasmodium malariae'], ['falciparum', 'Plasmodium falciparum']
   ];
+  const V3_LABELS = [
+    ['vivax', 'Plasmodium vivax'], ['knowlesi', 'Plasmodium knowlesi'], ['ovale', 'Plasmodium ovale'],
+    ['malariae', 'Plasmodium malariae'], ['falciparum', 'Plasmodium falciparum']
+  ];
   const elements = {
     printCurrent: document.getElementById('print-current'), printAll: document.getElementById('print-all'),
     previous: document.getElementById('report-previous'), next: document.getElementById('report-next'), keyboardTip: document.getElementById('report-keyboard-tip'),
@@ -34,6 +38,18 @@
     if (!item.image || !isNonEmptyString(item.image.filename) || !isNonEmptyString(item.image.mimeType) || !isNonEmptyString(item.image.reportPreview) ||
       !item.image.reportPreview.startsWith('data:image/jpeg;base64,') || !Number.isFinite(item.image.width) || item.image.width < 1 || !Number.isFinite(item.image.height) || item.image.height < 1) return false;
     const inference = item.inference;
+    if (inference?.schemaVersion === 'mesenterica-case-result-v3') {
+      const system = inference.systemResult;
+      const validLabels = Array.isArray(inference.probabilities) && inference.probabilities.length === 5 && inference.probabilities.every(isValidProbability) &&
+        V3_LABELS.every(([id, label], index) => inference.probabilities[index].id === id && inference.probabilities[index].label === label);
+      const validSystem = system?.schemaVersion === 'mesenterica-case-result-v3' && system.outcome &&
+        ['no_parasite_detected', 'species_uncertain', 'suspected_species', 'suspected_mixed'].includes(system.outcome.code) &&
+        isNonEmptyString(system.outcome.message) && isNonEmptyString(system.outcome.reason) && Array.isArray(system.detectorBoxes) && Array.isArray(system.cells);
+      const documentation = item.documentation;
+      return validLabels && validSystem && isNonEmptyString(inference.modelName) && isNonEmptyString(inference.analysedAt) &&
+        documentation && isNonEmptyString(documentation.caseId) && isNonEmptyString(documentation.examinedAt) && isNonEmptyString(documentation.clinicianConclusion) &&
+        typeof documentation.notes === 'string' && typeof documentation.conclusionWasEdited === 'boolean';
+    }
     if (!inference || !isNonEmptyString(inference.modelName) || !isNonEmptyString(inference.analysedAt) || !inference.topClass ||
       !isNonEmptyString(inference.topClass.id) || !isNonEmptyString(inference.topClass.label) || !isNonEmptyString(inference.topClass.status) ||
       !isNonEmptyString(inference.topClass.presentation) || !Number.isFinite(inference.topClass.score) || inference.topClass.score < 0 || inference.topClass.score > 1 ||
@@ -49,6 +65,11 @@
       isNonEmptyString(documentation.clinicianConclusion) && typeof documentation.notes === 'string' && typeof documentation.conclusionWasEdited === 'boolean';
   }
   function isValidBatch(value) {
+    if (value?.version === 3) {
+      return isNonEmptyString(value.createdAt) && Number.isInteger(value.activeCaseIndex) && isNonEmptyString(value.examiner) && Array.isArray(value.cases) && value.cases.length > 0 &&
+        value.activeCaseIndex >= 0 && value.activeCaseIndex < value.cases.length && value.cases.every((item) => isValidCase(item, null)) &&
+        new Set(value.cases.map((item) => item.documentation.caseId)).size === value.cases.length;
+    }
     if (!value || value.version !== 2 || !isNonEmptyString(value.createdAt) || !Number.isFinite(value.threshold) || value.threshold < 0.5 || value.threshold > 0.95 ||
       !Number.isInteger(value.activeCaseIndex) || !isNonEmptyString(value.examiner) || !Array.isArray(value.cases) || !value.cases.length ||
       value.activeCaseIndex < 0 || value.activeCaseIndex >= value.cases.length || !value.cases.every((item) => isValidCase(item, value.threshold))) return false;
@@ -74,22 +95,28 @@
     });
   }
   function renderGuidance(item, detection) {
-    const guidance = window.MesentericaClinical.getGuidance(item.inference.topClass, detection); elements.guidanceTitle.textContent = guidance.title; elements.guidanceSummary.textContent = guidance.summary; elements.guidancePoints.replaceChildren();
+    const system = item.inference.systemResult; const guidanceTop = system?.outcome?.code === 'no_parasite_detected' ? { id: 'no_parasite_detected', label: 'Tidak ada box' } :
+      (system?.outcome?.primarySpecies ? item.inference.topClass : (system ? { id: 'review', label: 'Tinjauan manual' } : item.inference.topClass));
+    const guidance = window.MesentericaClinical.getGuidance(guidanceTop, detection); elements.guidanceTitle.textContent = guidance.title; elements.guidanceSummary.textContent = guidance.summary; elements.guidancePoints.replaceChildren();
     guidance.points.forEach((point) => { const listItem = document.createElement('li'); listItem.textContent = point; elements.guidancePoints.append(listItem); });
     elements.referenceList.replaceChildren();
-    window.MesentericaClinical.getReferences(item.inference.topClass).forEach((reference) => {
+    window.MesentericaClinical.getReferences(guidanceTop).forEach((reference) => {
       const listItem = document.createElement('li'); const link = document.createElement('a'); link.href = reference.url; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = reference.title; listItem.append(link); elements.referenceList.append(listItem);
     });
   }
   function renderCase(index) {
-    activeIndex = index; const item = batch.cases[index]; const top = item.inference.topClass; const detection = window.MesentericaClinical.getDetectionStatus(top.score, batch.threshold);
+    activeIndex = index; const item = batch.cases[index]; const top = item.inference.topClass; const system = item.inference.systemResult; const isV3 = item.inference.schemaVersion === 'mesenterica-case-result-v3';
+    const detection = isV3 ? (['suspected_species', 'suspected_mixed'].includes(system.outcome.code)
+      ? { id: 'confident', label: 'Suspek berbasis ≥2 sel', className: 'is-confident', description: system.outcome.reason }
+      : { id: 'not-confident', label: 'Tinjauan manual', className: 'is-not-confident', description: system.outcome.reason })
+      : window.MesentericaClinical.getDetectionStatus(top.score, batch.threshold);
     elements.metaId.textContent = createReportId(item); elements.metaCase.textContent = item.documentation.caseId; elements.metaExamined.textContent = formatDateTime(item.documentation.examinedAt);
     elements.metaTime.textContent = formatDateTime(item.inference.analysedAt); elements.metaExaminer.textContent = batch.examiner;
     elements.resultBanner.classList.remove('is-confident', 'is-less-confident', 'is-not-confident'); elements.resultBanner.classList.add(detection.className);
-    elements.resultTitle.textContent = top.presentation; elements.resultDetail.textContent = detection.description; elements.detectionBadge.textContent = `Status Deteksi: ${detection.label}`; elements.topScore.textContent = `${(top.score * 100).toFixed(1)}%`;
+    elements.resultTitle.textContent = isV3 ? system.outcome.message : top.presentation; elements.resultDetail.textContent = detection.description; elements.detectionBadge.textContent = `Status: ${detection.label}`; elements.topScore.textContent = isV3 ? `${system.counts.acceptedSpeciesCells} sel diterima` : `${(top.score * 100).toFixed(1)}%`;
     elements.filenameLabel.textContent = item.image.filename; elements.reportImage.src = item.image.reportPreview; elements.modelName.textContent = item.inference.modelName;
     elements.imageSize.textContent = `${item.image.width} × ${item.image.height} px`; elements.analysisTime.textContent = formatDateTime(item.inference.analysedAt);
-    elements.threshold.textContent = `${(batch.threshold * 100).toFixed(0)}% · threshold tampilan non-tervalidasi`; elements.detectionStatus.textContent = `${detection.label} · ${detection.description}`;
+    elements.threshold.textContent = isV3 ? 'Threshold detector dan per-kelas dari metadata versi model' : `${(batch.threshold * 100).toFixed(0)}% · threshold tampilan non-tervalidasi`; elements.detectionStatus.textContent = `${detection.label} · ${detection.description}`;
     renderProbabilities(item); elements.clinicianConclusion.textContent = item.documentation.clinicianConclusion; elements.caseNotes.textContent = item.documentation.notes || 'Tidak ada catatan tambahan.'; renderGuidance(item, detection);
     elements.placeholder.hidden = true; elements.formalContent.hidden = false; elements.printCurrent.disabled = false; elements.printAll.disabled = false;
     elements.screenCounter.textContent = `Kasus ${index + 1} dari ${batch.cases.length} · ${item.documentation.caseId}`; elements.previous.disabled = index <= 0; elements.next.disabled = index >= batch.cases.length - 1;

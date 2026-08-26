@@ -1,56 +1,50 @@
 # MESENTERICA
 
-Prototipe klinis statis untuk membantu klinisi meninjau satu atau beberapa citra apusan darah tipis menggunakan model deteksi YOLO11n TensorFlow.js yang berjalan lokal di browser. Setiap gambar menjadi satu kasus. Aplikasi ini merupakan bantuan triase dan dokumentasi, bukan perangkat diagnosis mandiri.
+Prototipe lokal untuk membantu tinjauan citra apusan darah tipis. Sistem ini bukan diagnosis mandiri dan hasilnya belum siap digunakan sebagai perangkat medis tervalidasi.
 
-## Menjalankan secara lokal
+## Sistem AI aktif
 
-Aplikasi harus dibuka melalui server HTTP agar berkas model dapat dimuat. Dari folder proyek, jalankan salah satu server statis, lalu buka `index.html` melalui alamat yang diberikan server.
+Inferensi produksi memakai Google LiteRT.js 2.5.0 tanpa TensorFlow.js:
 
-Contoh dengan Python:
+1. YOLO11n detector mendeteksi satu kelas `infected_cell` pada tile 640×640 dengan overlap 20%.
+2. YOLO11n-cls menilai crop 224×224 sebagai lima spesies atau `non_parasite`.
+3. Agregator mengeluarkan `no_parasite_detected`, `species_uncertain`, `suspected_species`, atau `suspected_mixed`.
+
+WebGPU dipilih terlebih dahulu dan LiteRT WASM menjadi fallback. WebNN sengaja tidak diaktifkan. Threshold detector dan classifier berasal dari metadata versi model dan tidak dapat diubah dari UI. `non_parasite` menolak false-positive detector; aplikasi tidak lagi menghitung atau menampilkan `Normal = 1 - confidence`.
+
+## Menjalankan lokal
 
 ```sh
 python3 -m http.server 4173
 ```
 
-Kemudian buka `http://127.0.0.1:4173/`.
-
-## Publikasi melalui GitHub Pages
-
-1. Unggah seluruh isi folder ini ke root repositori GitHub. Pertahankan struktur folder `model/` dan `vendor/`.
-2. Di GitHub, buka **Settings → Pages**.
-3. Pada **Build and deployment**, pilih **Deploy from a branch**.
-4. Pilih branch publikasi, biasanya `main`, dan folder `/ (root)`.
-5. Simpan lalu tunggu alamat GitHub Pages tersedia.
-
-Semua jalur aset bersifat relatif sehingga dapat berjalan dari domain pengguna maupun subdirektori proyek GitHub Pages. Jangan membuka `analysis.html` langsung melalui skema `file://`.
+Buka `http://127.0.0.1:4173/`. Jangan membuka halaman melalui `file://`. Setelah satu pemuatan lengkap, service worker menyimpan aplikasi, model, dan runtime agar dapat dipakai offline.
 
 ## Privasi dan penyimpanan
 
-- Inferensi menggunakan berkas model lokal di `model/`.
-- Model mendeteksi lima spesies *Plasmodium*. Indikator Normal diturunkan sebagai tidak adanya deteksi parasit, bukan kelas keenam hasil pelatihan.
-- Gambar tidak diunggah oleh aplikasi.
-- Hanya satu batch aktif disimpan dalam `sessionStorage` dengan kunci `mesenterica.currentBatch.v2`.
-- Batch dapat memuat beberapa kasus dengan hubungan tetap satu gambar = satu kasus. Tidak ada riwayat batch.
-- Bundel dihapus saat analisis direset atau ketika tab ditutup.
-- Tidak ada riwayat kasus dan tidak ada server backend.
+- Gambar tidak diunggah oleh aplikasi dan inferensi tidak memerlukan request eksternal.
+- Satu gambar tetap menjadi satu kasus.
+- Batch laporan aktif disimpan sementara dalam `sessionStorage` memakai schema v3; pembaca laporan tetap menerima schema v2 sebagai arsip legacy.
+- Data batch hilang ketika analisis direset atau tab ditutup.
 
-## Berkas utama
+## Artefak model
 
-- `index.html` — beranda pemilihan alur.
-- `analysis.html` — analisis batch, kamera live, navigator kasus, dan dokumentasi klinisi.
-- `clinical-guidance.js` — status deteksi, panduan non-preskriptif, dan referensi bersama.
-- `report.html` — laporan formal multi-kasus dengan cetak halaman aktif atau seluruh batch.
-- `legacy_index.html` — beranda versi sebelumnya yang dipertahankan sebagai arsip desain.
-- `archive/mockups/` — empat mockup HTML awal, disimpan hanya sebagai referensi desain.
+- `model/detector/model.tflite` — detector FP32, input `[1,3,640,640]`, output `[1,5,8400]`.
+- `model/classifier/model.tflite` — classifier FP32, input `[1,3,224,224]`, output `[1,6]`.
+- `model/manifest.json` — versi runtime/model dan jalur artefak.
+- `model/*/metadata.json` — preprocessing, class order, threshold, tiling, dan NMS.
+- `model/checksums.sha256` — checksum model, metadata, dan fixtures.
+- `model/parity-fixtures.json` — kontrak tensor dan kasus agregasi deterministik tanpa challenge image.
 
-Empat mockup awal tidak ditautkan dari aplikasi dan tidak termasuk jalur penggunaan resmi.
+## Berkas aplikasi
 
-## Alur batch dan laporan
+- `analysis.html` / `analysis.js` — upload, kamera, batch, dan dokumentasi klinisi.
+- `yolo-inference.js` — preprocessing typed-array, LiteRT, tiled detector, crop classifier, NMS, dan aggregator.
+- `clinical-guidance.js` — pesan tinjauan non-preskriptif.
+- `report.html` / `report-state.js` — laporan schema v3 dan pembaca legacy v2.
+- `service-worker.js` — cache offline versioned.
+- `litert-self-test.html` — fixture lokal 25-run WebGPU/WASM; bukan bagian alur klinis.
 
-- Pilih beberapa PNG, JPEG, atau WebP (maksimum 10 MB per gambar), atau gunakan kamera live lalu capture setiap frame yang akan dijadikan kasus.
-- Deteksi dengan confidence minimal 25% digambar pada canvas setelah NMS. JPEG beranotasi yang sama digunakan pada pratinjau dan laporan.
-- Satu threshold deteksi berlaku untuk seluruh batch. Perubahannya hanya memperbarui status tampilan; skor confidence model tidak dihitung ulang atau diubah.
-- Isi nama pemeriksa satu kali, tinjau dokumentasi setiap kasus, lalu centang pernyataan peninjauan sebelum menyiapkan laporan.
-- Laporan dapat dicetak sebagai halaman kasus yang sedang terlihat atau sebagai seluruh batch. Pada cetak seluruh batch, setiap kasus dimulai pada halaman A4 baru.
+## Status validasi
 
-Semua pemrosesan dan penyimpanan sementara dilakukan di browser. Pastikan kapasitas penyimpanan tab cukup ketika menambahkan banyak gambar.
+FP32 dipilih karena kandidat quantized tidak memenuhi seluruh batas recall, false-box, dan identitas keputusan. Challenge test terkunci masih menunjukkan kelemahan besar pada detector dan classifier spesies; hasil challenge tidak digunakan untuk memilih threshold atau mengubah model. Gunakan aplikasi hanya sebagai prototipe engineering dengan tinjauan mikroskopis wajib.

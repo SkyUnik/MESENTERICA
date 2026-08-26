@@ -7,10 +7,9 @@
     <meta name="description" content="Prototipe analisis lokal citra apusan darah tipis untuk membantu tinjauan klinis malaria.">
     <title>Analisis Apusan Darah | MESENTERICA</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="vendor/tf.min.js" defer></script>
-    <script src="yolo-inference.js" defer></script>
+    <script type="importmap">{"imports":{"@litertjs/wasm-utils":"./vendor/litert/wasm-utils.js"}}</script>
     <script src="clinical-guidance.js" defer></script>
-    <script src="analysis.js" defer></script>
+    <script src="analysis.js" type="module"></script>
   </head>
   <body data-analysis-mode="quick">
     <header class="site-header">
@@ -35,7 +34,7 @@
         <div class="hero-copy">
           <p class="eyebrow">Tinjauan citra berbantuan AI</p>
           <h1 id="page-title">Analisis apusan darah tipis, langsung di perangkat Anda.</h1>
-          <p>Unggah satu atau beberapa citra untuk meninjau indikasi model terhadap kondisi normal atau lima spesies <em>Plasmodium</em>. Gambar tidak dikirim ke server.</p>
+          <p>Unggah satu atau beberapa citra untuk menjalankan detector sel terinfeksi, classifier enam kelas, dan agregasi kasus secara lokal. Gambar tidak dikirim ke server.</p>
         </div>
         <div class="hero-image" role="img" aria-label="Peralatan laboratorium dan preparat apusan darah"></div>
       </section>
@@ -154,7 +153,7 @@
               <div>
                 <div class="empty-orbit" aria-hidden="true">◎</div>
                 <h3>Belum ada gambar untuk dianalisis</h3>
-                <p>Setelah gambar dipilih, confidence deteksi YOLO untuk lima spesies dan indikator tanpa deteksi akan ditampilkan tanpa mengirim gambar keluar dari perangkat.</p>
+                <p>Setelah gambar dipilih, model mendeteksi kandidat sel lalu menilai spesies atau <em>non-parasite</em>. Hasil selalu memerlukan tinjauan mikroskopis.</p>
               </div>
             </div>
             <div class="result-loading" id="result-loading" role="status" aria-live="polite" hidden>
@@ -172,11 +171,11 @@
                 <span class="result-confidence" id="result-confidence"></span>
               </section>
               <div class="probability-heading">
-                <strong>Confidence deteksi YOLO</strong>
+                <strong>Evidence agregat spesies</strong>
                 <span id="analysis-duration"></span>
               </div>
-              <div class="probability-list" id="probability-list" aria-label="Confidence deteksi YOLO per kelas"></div>
-              <p class="result-footnote">Skor spesies adalah confidence deteksi YOLO. Skor Normal berarti tidak ada parasit terdeteksi (1 dikurangi confidence spesies terkuat); skor bukan probabilitas diagnosis klinis.</p>
+              <div class="probability-list" id="probability-list" aria-label="Evidence agregat per spesies"></div>
+              <p class="result-footnote">Evidence spesies menggabungkan confidence detector, kualitas crop, dan probabilitas classifier yang dikalibrasi. Ini bukan probabilitas diagnosis klinis.</p>
               <section class="detection-status-card" id="detection-status-card" aria-labelledby="detection-status-title">
                 <div>
                   <span>Status Deteksi</span>
@@ -184,19 +183,18 @@
                   <p id="detection-status-description">—</p>
                 </div>
                 <div class="detection-legend" aria-label="Legenda status deteksi">
-                  <span class="legend-confident"><i></i><b>Yakin</b> ≥ threshold</span>
-                  <span class="legend-less"><i></i><b>Kurang Yakin</b> 50%–threshold</span>
-                  <span class="legend-not"><i></i><b>Tidak Yakin</b> &lt;50%</span>
+                  <span class="legend-confident"><i></i><b>Suspek</b> didukung ≥2 sel concordant</span>
+                  <span class="legend-not"><i></i><b>Tinjau manual</b> untuk negatif, satu sel, ditolak, atau konflik</span>
                 </div>
                 <p class="detection-disclaimer">Warna menunjukkan keyakinan keluaran model, bukan kepastian diagnosis atau tingkat keparahan pasien.</p>
               </section>
             </div>
             <details class="threshold-box">
-              <summary>Pengaturan lanjutan</summary>
+              <summary>Pengaturan analisis terkunci</summary>
               <div class="threshold-content">
-                <label for="threshold"><span>Threshold Deteksi</span><strong id="threshold-value">70%</strong></label>
-                <input id="threshold" type="range" min="50" max="95" step="1" value="70">
-                <p>Threshold mengatur status tampilan seluruh batch dan bukan nilai diagnostik yang tervalidasi. Bounding box menggunakan confidence tetap 25%.</p>
+                <label><span>Threshold versi model</span><strong id="threshold-value">Terkalibrasi</strong></label>
+                <input id="threshold" type="range" min="0" max="1" value="0" hidden disabled>
+                <p>Detector menggunakan threshold 0,073152 dan classifier memakai threshold per kelas dari metadata. Nilai tidak dapat diubah agar keputusan agregasi tetap reproducible.</p>
               </div>
             </details>
           </div>

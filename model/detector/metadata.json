@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "mesenterica-model-metadata-v3",
+  "modelName": "YOLO11n infected-cell detector v3",
+  "modelVersion": "detector-v3-base-fp32-litert",
+  "task": "detect",
+  "classNames": ["infected_cell"],
+  "input": {"shape": [1, 3, 640, 640], "layout": "NCHW", "dtype": "float32", "range": [0, 1]},
+  "output": {"shape": [1, 5, 8400], "layout": "NCHW-candidates", "dtype": "float32", "coordinates": "normalized_xywh"},
+  "tileSize": 640,
+  "tileOverlap": 0.2,
+  "tileNmsIou": 0.7,
+  "globalNms": {"classAgnostic": true, "iouThreshold": 0.5},
+  "candidateThreshold": 0.073152,
+  "maxDetectionsPerTile": 300,
+  "thresholdStatus": "provisional_group_safe_validation",
+  "validationConstraint": "mean false boxes per parasite-free field <= 3; only five validation-negative fields were available"
+}
