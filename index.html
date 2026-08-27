@@ -69,8 +69,20 @@
       const titleButton = document.getElementById('alternative-title');
       const closeButton = document.getElementById('dialog-close');
       const confirmButton = document.getElementById('dialog-confirm');
+      const autoOpenCountKey = 'mesenterica.aboutDialogAutoOpenCount.v1';
+      const maximumAutoOpens = 3;
 
-      premiseDialog.showModal();
+      try {
+        const storedCount = Number.parseInt(sessionStorage.getItem(autoOpenCountKey) || '0', 10);
+        const autoOpenCount = Number.isFinite(storedCount) && storedCount > 0 ? storedCount : 0;
+        if (autoOpenCount < maximumAutoOpens) {
+          premiseDialog.showModal();
+          sessionStorage.setItem(autoOpenCountKey, String(autoOpenCount + 1));
+        }
+      } catch {
+        premiseDialog.showModal();
+      }
+
       titleButton.addEventListener('click', () => premiseDialog.showModal());
       closeButton.addEventListener('click', () => premiseDialog.close());
       confirmButton.addEventListener('click', () => premiseDialog.close());
@@ -79,12 +91,6 @@
       });
 
       if ('serviceWorker' in navigator) {
-        let refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (refreshing) return;
-          refreshing = true;
-          window.location.reload();
-        });
         window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
       }
     </script>
