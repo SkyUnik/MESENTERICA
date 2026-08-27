@@ -40,12 +40,17 @@ Buka `http://127.0.0.1:4173/`. Jangan membuka halaman melalui `file://`. Setelah
 
 ## Berkas aplikasi
 
-- `analysis.html` / `analysis.js` — upload, kamera, batch, dan dokumentasi klinisi.
-- `yolo-inference.js` — preprocessing typed-array, LiteRT, tiled detector, crop classifier, NMS, dan aggregator.
-- `clinical-guidance.js` — pesan tinjauan non-preskriptif.
-- `report.html` / `report-state.js` — laporan schema v3 dan pembaca legacy v2.
+- `index.html`, `analysis.html`, dan `report.html` — halaman publik GitHub Pages.
+- `assets/js/analysis.js` — upload, kamera, batch, dan dokumentasi klinisi.
+- `assets/js/yolo-inference.js` — preprocessing typed-array, LiteRT, tiled detector, crop classifier, NMS, dan aggregator.
+- `assets/js/clinical-guidance.js` — pesan tinjauan non-preskriptif.
+- `assets/js/report-state.js` — laporan schema v3 dan pembaca legacy v2.
+- `assets/css/` dan `assets/images/` — tampilan dan gambar situs.
 - `service-worker.js` — cache offline versioned.
-- `litert-self-test.html` — fixture lokal 25-run WebGPU/WASM; bukan bagian alur klinis.
+- `tests/litert-self-test.html` — fixture lokal 25-run WebGPU/WASM; bukan bagian alur klinis.
+- `docs/` — dokumentasi desain dan checkpoint pengembangan.
+- `archive/` — mockup, halaman lama, serta artefak lokal yang tidak dipublikasikan.
+- `model/` dan `vendor/` — model aktif serta runtime LiteRT lokal.
 
 ## Status validasi
 

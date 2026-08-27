@@ -33,4 +33,4 @@ Completed locally on 26 August 2026. Nothing was pushed or published.
 
 ## Recovery
 
-The prior TF.js model and tester were moved to the ignored, recoverable folder `model_backup_tfjs_before_litert_20260826/`. The current `model/manifest.json` is the atomic switch point.
+The prior TF.js model and tester were moved to the ignored, recoverable folder `archive/local/model-backups/tfjs-before-litert-20260826/`. The current `model/manifest.json` is the atomic switch point.

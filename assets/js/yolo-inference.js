@@ -1,4 +1,6 @@
-import { Tensor, isWebGPUSupported, loadAndCompile, loadLiteRt, supportsFeature } from './vendor/litert/litert-core.js';
+import { Tensor, isWebGPUSupported, loadAndCompile, loadLiteRt, supportsFeature } from '../../vendor/litert/litert-core.js';
+
+const SITE_ROOT_URL = new URL('../../', import.meta.url);
 
 const SPECIES = Object.freeze(['falciparum', 'vivax', 'malariae', 'ovale', 'knowlesi']);
 const NON_PARASITE = 'non_parasite';
@@ -134,14 +136,14 @@ function validateModel(model, inputShape, outputShape, label) {
   if (inputs.length !== 1 || outputs.length !== 1 || inputs[0].dtype !== 'float32' || outputs[0].dtype !== 'float32' || !sameShape(inputs[0].shape, inputShape) || !sameShape(outputs[0].shape, outputShape)) throw new Error(`${label} memiliki dtype, bentuk, atau layout tensor yang tidak kompatibel.`);
 }
 
-export async function loadTwoStage(manifestUrl = new URL('model/manifest.json', document.baseURI).href, options = {}) {
+export async function loadTwoStage(manifestUrl = new URL('model/manifest.json', SITE_ROOT_URL).href, options = {}) {
   const loadStarted = performance.now(); const manifest = await fetchJson(manifestUrl);
   if (manifest.schemaVersion !== 'mesenterica-litert-manifest-v3' || manifest.runtime?.webnnEnabled !== false) throw new Error('Manifest LiteRT tidak kompatibel.');
   const base = new URL('.', manifestUrl); const detectorMetadata = await fetchJson(new URL(manifest.detector.metadata, base)); const classifierMetadata = await fetchJson(new URL(manifest.classifier.metadata, base));
   if (detectorMetadata.classNames?.length !== 1 || detectorMetadata.classNames[0] !== 'infected_cell') throw new Error('Detector lama lima-kelas ditolak.');
   if (classifierMetadata.classNames?.length !== 6 || !classifierMetadata.classNames.includes(NON_PARASITE)) throw new Error('Classifier harus memiliki enam kelas termasuk non_parasite.');
   const [detectorBytes, classifierBytes] = await Promise.all([fetchVerifiedModel(new URL(manifest.detector.model, base), manifest.detector.sha256), fetchVerifiedModel(new URL(manifest.classifier.model, base), manifest.classifier.sha256)]);
-  const jspi = await supportsFeature('jspi').catch(() => false); await loadLiteRt(new URL('vendor/litert/wasm/', document.baseURI).href, { jspi });
+  const jspi = await supportsFeature('jspi').catch(() => false); await loadLiteRt(new URL('vendor/litert/wasm/', SITE_ROOT_URL).href, { jspi });
   let accelerator = options.forceAccelerator === 'wasm' ? 'wasm' : (isWebGPUSupported() ? 'webgpu' : 'wasm'); let fallbackReason = accelerator === 'wasm' ? (options.forceAccelerator === 'wasm' ? 'WASM forced by verification fixture' : 'WebGPU is unavailable') : null; let detectorModel; let classifierModel;
   async function compile(selected) { const options = selected === 'webgpu' ? { accelerator: 'webgpu', gpuOptions: { precision: 'fp32' } } : { accelerator: 'wasm' }; const detector = await loadAndCompile(detectorBytes, options); try { return [detector, await loadAndCompile(classifierBytes, options)]; } catch (error) { detector.delete(); throw error; } }
   try { [detectorModel, classifierModel] = await compile(accelerator); } catch (error) { if (accelerator === 'wasm') throw error; fallbackReason = `WebGPU compilation failed: ${error.message || error}`; accelerator = 'wasm'; [detectorModel, classifierModel] = await compile('wasm'); }
