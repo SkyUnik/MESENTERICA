@@ -1,7 +1,7 @@
-const CACHE_NAME = 'mesenterica-litert-2026-08-27-v10';
+const CACHE_NAME = 'mesenterica-litert-2026-08-27-v11';
 const LOCAL_ASSETS = [
-  './', './index.html', './analysis.html', './assets/js/analysis.js?v=20260826.4', './assets/js/yolo-inference.js?v=20260826.4', './assets/js/clinical-guidance.js?v=20260826.4',
-  './report.html', './assets/js/report-state.js?v=20260826.4', './assets/css/styles.css?v=20260826.4', './assets/images/screen.png', './model/manifest.json?v=20260826.4', './model/checksums.sha256', './model/parity-fixtures.json',
+  './', './index.html', './analysis.html', './assets/js/analysis.js?v=20260827.1', './assets/js/yolo-inference.js?v=20260827.1', './assets/js/clinical-guidance.js?v=20260827.1',
+  './report.html', './assets/js/report-state.js?v=20260827.1', './assets/css/styles.css?v=20260827.1', './assets/images/screen.png?v=20260827.1', './model/manifest.json?v=20260827.1', './model/checksums.sha256', './model/parity-fixtures.json',
   './model/detector/model.tflite', './model/detector/metadata.json', './model/classifier/model.tflite', './model/classifier/metadata.json',
   './vendor/litert/litert-core.js', './vendor/litert/wasm-utils.js',
   './vendor/litert/wasm/litert_wasm_compat_internal.js', './vendor/litert/wasm/litert_wasm_compat_internal.wasm',

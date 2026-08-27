@@ -253,7 +253,7 @@ summary:focus-visible {
 
 .hero-image {
   min-height: 218px;
-  background-image: linear-gradient(90deg, rgba(32, 44, 57, 0.62), rgba(32, 44, 57, 0.04)), url("../images/screen.png");
+  background-image: linear-gradient(90deg, rgba(32, 44, 57, 0.62), rgba(32, 44, 57, 0.04)), url("../images/screen.png?v=20260827.1");
   background-position: center;
   background-size: cover;
 }
@@ -358,7 +358,7 @@ summary:focus-visible {
 }
 
 .home-hero-image {
-  background-image: url("../images/screen.png");
+  background-image: url("../images/screen.png?v=20260827.1");
   background-position: center 48%;
   background-size: cover;
   transform: scale(1.015);
@@ -2958,7 +2958,7 @@ summary:focus-visible {
   min-height: 100vh;
   min-height: 100svh;
   overflow: hidden;
-  background-image: url("../images/screen.png");
+  background-image: url("../images/screen.png?v=20260827.1");
   background-position: center;
   background-size: cover;
   isolation: isolate;

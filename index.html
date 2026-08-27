@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#9f151c">
     <meta name="description" content="Beranda alternatif MALARIA untuk memilih analisis cepat atau analisis dengan laporan klinis.">
     <title>MALARIA | Pilih Alur Analisis</title>
-    <link rel="stylesheet" href="assets/css/styles.css?v=20260826.4">
+    <link rel="stylesheet" href="assets/css/styles.css?v=20260827.1">
   </head>
   <body class="alternative-page">
     <main class="alternative-home" aria-labelledby="alternative-title">
@@ -45,7 +45,7 @@
       <div class="dialog-facts">
         <div>
           <span aria-hidden="true">01</span>
-          <p><strong>Berjalan lokal</strong>Gambar dianalisis melalui TensorFlow.js langsung di perangkat dan tidak dikirim ke server.</p>
+          <p><strong>Berjalan lokal</strong>Gambar dianalisis melalui LiteRT.js langsung di perangkat dan tidak dikirim ke server.</p>
         </div>
         <div>
           <span aria-hidden="true">02</span>
@@ -70,12 +70,23 @@
       const closeButton = document.getElementById('dialog-close');
       const confirmButton = document.getElementById('dialog-confirm');
 
+      premiseDialog.showModal();
       titleButton.addEventListener('click', () => premiseDialog.showModal());
       closeButton.addEventListener('click', () => premiseDialog.close());
       confirmButton.addEventListener('click', () => premiseDialog.close());
       premiseDialog.addEventListener('click', (event) => {
         if (event.target === premiseDialog) premiseDialog.close();
       });
+
+      if ('serviceWorker' in navigator) {
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (refreshing) return;
+          refreshing = true;
+          window.location.reload();
+        });
+        window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
+      }
     </script>
   </body>
 </html>

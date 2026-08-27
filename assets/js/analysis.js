@@ -1,9 +1,9 @@
-import { loadTwoStage } from './yolo-inference.js?v=20260826.4';
+import { loadTwoStage } from './yolo-inference.js?v=20260827.1';
 
 (() => {
   'use strict';
 
-  const MANIFEST_URL = new URL('model/manifest.json?v=20260826.4', document.baseURI).href;
+  const MANIFEST_URL = new URL('model/manifest.json?v=20260827.1', document.baseURI).href;
   const MAX_FILE_SIZE = 10 * 1024 * 1024;
   const STORAGE_KEY = 'mesenterica.currentBatch.v2';
   const LEGACY_STORAGE_KEY = 'mesenterica.currentCase.v1';
