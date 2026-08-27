@@ -44,6 +44,7 @@ Buka `http://127.0.0.1:4173/`. Jangan membuka halaman melalui `file://`. Setelah
 - `assets/js/analysis.js` — upload, kamera, batch, dan dokumentasi klinisi.
 - `assets/js/yolo-inference.js` — preprocessing typed-array, LiteRT, tiled detector, crop classifier, NMS, dan aggregator.
 - `assets/js/clinical-guidance.js` — pesan tinjauan non-preskriptif.
+- `assets/js/guidance-content.js` — teks box guidance yang dapat diedit per outcome, per spesies, dan per kombinasi infeksi campuran.
 - `assets/js/report-state.js` — laporan schema v3 dan pembaca legacy v2.
 - `assets/css/` dan `assets/images/` — tampilan dan gambar situs.
 - `service-worker.js` — cache offline versioned.
@@ -55,3 +56,7 @@ Buka `http://127.0.0.1:4173/`. Jangan membuka halaman melalui `file://`. Setelah
 ## Status validasi
 
 FP32 dipilih karena kandidat quantized tidak memenuhi seluruh batas recall, false-box, dan identitas keputusan. Challenge test terkunci masih menunjukkan kelemahan besar pada detector dan classifier spesies; hasil challenge tidak digunakan untuk memilih threshold atau mengubah model. Gunakan aplikasi hanya sebagai prototipe engineering dengan tinjauan mikroskopis wajib.
+
+## Mengubah isi box guidance
+
+Seluruh teks box **Prioritas tinjauan non-preskriptif** berada di `assets/js/guidance-content.js`. Ubah nilai `eyebrow`, `title`, `summary`, atau daftar `points` di sana. Konfigurasi dipisahkan menurut state `no_parasite_detected`, `species_uncertain`, `suspected_species`, dan `suspected_mixed`; state berbasis spesies mempunyai entry `bySpecies` untuk vivax, knowlesi, ovale, malariae, dan falciparum. Override untuk kombinasi infeksi campuran dapat ditambahkan di `suspected_mixed.combinations`.

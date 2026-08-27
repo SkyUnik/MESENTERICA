@@ -20,79 +20,11 @@
     })
   });
 
-  const GUIDANCE = Object.freeze({
-    review: Object.freeze({
-      title: 'Tinjau kandidat sel dan hasil classifier secara manual',
-      summary: 'Evidence sistem belum memenuhi aturan minimum untuk pelaporan spesies. Jangan menetapkan spesies dari kelas dengan skor tertinggi saja.',
-      points: Object.freeze([
-        'Tinjau setiap bounding box, kualitas crop, temuan artefak, dan kecukupan lapang pandang.',
-        'Konfirmasi keberadaan parasit, stadium, spesies, dan densitas melalui mikroskopi sesuai prosedur laboratorium.',
-        'Ulangi akuisisi atau gunakan pemeriksaan rujukan bila citra tidak memadai atau bukti saling bertentangan.'
-      ])
-    }),
-    no_parasite_detected: Object.freeze({
-      title: 'Tidak ada box bukan berarti diagnosis malaria negatif',
-      summary: 'Detector tidak menemukan kandidat parasit pada citra ini, tetapi parasitemia rendah, kualitas citra, atau lapang pandang yang tidak representatif tetap dapat menyebabkan parasit terlewat.',
-      points: Object.freeze([
-        'Jika kecurigaan klinis tetap ada, lanjutkan pemeriksaan mikroskopis dan/atau RDT sesuai pedoman.',
-        'Tinjau preparat tipis dan tebal, kualitas pewarnaan, fokus, serta kecukupan lapang pandang.',
-        'Jangan menuliskan “Normal” atau menyingkirkan malaria hanya dari keluaran ini.'
-      ])
-    }),
-    normal: Object.freeze({
-      title: 'Hasil model Normal tidak menyingkirkan malaria',
-      summary: 'Indikator Normal berarti tidak ada parasit yang terdeteksi oleh YOLO, tetapi densitas parasit rendah, kualitas citra, atau lapang pandang yang tidak representatif tetap dapat memengaruhi hasil.',
-      points: Object.freeze([
-        'Jika kecurigaan klinis tetap ada, lanjutkan pemeriksaan mikroskopis dan/atau RDT sesuai pedoman.',
-        'Tinjau preparat tipis dan tebal, kualitas pewarnaan, serta kecukupan lapang pandang.',
-        'Jangan menunda evaluasi kondisi demam lain hanya berdasarkan keluaran model.'
-      ])
-    }),
-    vivax: Object.freeze({
-      title: 'Konfirmasi spesies dan temuan parasit secara manual',
-      summary: 'Keluaran tertinggi mengarah ke Plasmodium vivax dan memerlukan identifikasi spesies yang berkualitas sebelum digunakan dalam keputusan klinis.',
-      points: Object.freeze([
-        'Konfirmasi keberadaan parasit, spesies, stadium, dan densitas melalui mikroskopi sesuai prosedur laboratorium.',
-        'Korelasikan dengan riwayat paparan, perjalanan, episode malaria sebelumnya, dan manifestasi klinis.',
-        'Gunakan pedoman nasional dan kebijakan institusi untuk evaluasi lanjutan; model tidak menentukan terapi.'
-      ])
-    }),
-    knowlesi: Object.freeze({
-      title: 'Prioritaskan konfirmasi dan penilaian klinis segera',
-      summary: 'Plasmodium knowlesi dapat menyebabkan penyakit berat. Keluaran model memerlukan verifikasi spesies dan penilaian kondisi pasien tanpa penundaan.',
-      points: Object.freeze([
-        'Konfirmasi berbasis parasit dan minta tinjauan tenaga berpengalaman bila identifikasi spesies tidak pasti.',
-        'Nilai tanda bahaya dan parameter keparahan sesuai protokol malaria berat yang berlaku.',
-        'Pertimbangkan konteks paparan dan epidemiologi lokal; model tidak membedakan sumber atau jalur transmisi.'
-      ])
-    }),
-    ovale: Object.freeze({
-      title: 'Verifikasi spesies dan korelasikan dengan riwayat klinis',
-      summary: 'Keluaran tertinggi mengarah ke Plasmodium ovale. Konfirmasi manual diperlukan karena spesies non-falciparum dapat sulit dibedakan hanya dari satu citra.',
-      points: Object.freeze([
-        'Tinjau morfologi parasit pada preparat berkualitas dan konfirmasi spesies melalui prosedur diagnostik yang tersedia.',
-        'Korelasikan dengan riwayat perjalanan, paparan, dan episode demam atau malaria sebelumnya.',
-        'Dokumentasikan ketidakpastian spesies dan rujuk sesuai prosedur laboratorium bila diperlukan.'
-      ])
-    }),
-    malariae: Object.freeze({
-      title: 'Konfirmasi spesies, stadium, dan densitas parasit',
-      summary: 'Keluaran tertinggi mengarah ke Plasmodium malariae dan harus diverifikasi menggunakan pemeriksaan berbasis parasit yang berkualitas.',
-      points: Object.freeze([
-        'Lakukan pemeriksaan mikroskopis sistematis dan dokumentasikan spesies, stadium, serta densitas parasit.',
-        'Korelasikan hasil dengan gejala, perjalanan penyakit, dan faktor risiko epidemiologis.',
-        'Gunakan pemeriksaan rujukan bila identifikasi spesies atau kepadatan parasit belum meyakinkan.'
-      ])
-    }),
-    falciparum: Object.freeze({
-      title: 'Prioritaskan konfirmasi dan penilaian tanda bahaya',
-      summary: 'Keluaran tertinggi mengarah ke Plasmodium falciparum. Konfirmasi parasitologis dan evaluasi keparahan perlu diprioritaskan.',
-      points: Object.freeze([
-        'Konfirmasi keberadaan parasit, spesies, stadium, dan densitas melalui mikroskopi berkualitas dan/atau RDT sesuai protokol.',
-        'Nilai tanda bahaya serta kriteria malaria berat dan eskalasi sesuai prosedur klinis setempat.',
-        'Jangan menggunakan skor confidence model untuk menentukan regimen atau dosis terapi.'
-      ])
-    })
+  const CONTENT = window.MesentericaGuidanceContent;
+  const FALLBACK_GUIDANCE = Object.freeze({
+    title: 'Tinjauan manual diperlukan',
+    summary: 'Isi guidance untuk state ini belum tersedia.',
+    points: Object.freeze([])
   });
 
   function getDetectionStatus(score, threshold) {
@@ -110,21 +42,53 @@
     return getModelSuggestion(top, detectionStatus);
   }
 
-  function getGuidance(top, detectionStatus) {
-    const base = GUIDANCE[top.id] || GUIDANCE.review;
-    const uncertainty = detectionStatus.id === 'confident' || ['review', 'no_parasite_detected'].includes(top.id) ? '' : `${detectionStatus.label}: kelas ${top.label} hanya merupakan keluaran tertinggi dan tidak boleh ditetapkan sebagai spesies tanpa konfirmasi. `;
-    return Object.freeze({ title: base.title, summary: `${uncertainty}${base.summary}`, points: base.points });
+  function normalizeGuidance(value) {
+    const base = value || FALLBACK_GUIDANCE;
+    return Object.freeze({
+      eyebrow: typeof CONTENT?.eyebrow === 'string' ? CONTENT.eyebrow : 'Prioritas tinjauan non-preskriptif',
+      title: typeof base.title === 'string' ? base.title : FALLBACK_GUIDANCE.title,
+      summary: typeof base.summary === 'string' ? base.summary : FALLBACK_GUIDANCE.summary,
+      points: Object.freeze(Array.isArray(base.points) ? [...base.points] : [])
+    });
   }
 
-  function getReferences(top) {
+  function getSystemSpecies(systemResult, top) {
+    const outcome = systemResult?.outcome;
+    return outcome?.primarySpecies || top?.id || null;
+  }
+
+  function getGuidance(systemResult, top, detectionStatus) {
+    const outcome = systemResult?.outcome;
+    if (outcome?.code && CONTENT?.states?.[outcome.code]) {
+      const state = CONTENT.states[outcome.code];
+      let selected = state.default;
+      if (outcome.code === 'suspected_mixed') {
+        const combination = [outcome.primarySpecies, ...(outcome.secondarySpecies || [])].filter(Boolean).sort().join('+');
+        selected = state.combinations?.[combination] || state.default;
+      } else {
+        selected = state.bySpecies?.[outcome.primarySpecies] || state.default;
+      }
+      return normalizeGuidance(selected);
+    }
+
+    const legacySpecies = CONTENT?.states?.suspected_species?.bySpecies?.[top?.id];
+    const selected = CONTENT?.legacy?.[top?.id] || legacySpecies || CONTENT?.legacy?.review;
+    const base = normalizeGuidance(selected);
+    const uncertainty = detectionStatus?.id === 'confident' || ['review', 'normal'].includes(top?.id) ? '' : `${detectionStatus.label}: kelas ${top.label} hanya merupakan keluaran tertinggi dan tidak boleh ditetapkan sebagai spesies tanpa konfirmasi. `;
+    return Object.freeze({ ...base, summary: `${uncertainty}${base.summary}` });
+  }
+
+  function getReferences(systemResult, top) {
     const references = [REFERENCES.kemenkes, REFERENCES.whoGuidelines, REFERENCES.whoDiagnostics];
-    if (top.id === 'knowlesi') references.push(REFERENCES.whoKnowlesi);
+    const outcome = systemResult?.outcome;
+    const species = [getSystemSpecies(systemResult, top), ...(outcome?.secondarySpecies || [])];
+    if (species.includes('knowlesi')) references.push(REFERENCES.whoKnowlesi);
     return references;
   }
 
   window.MesentericaClinical = Object.freeze({
     REFERENCES,
-    GUIDANCE,
+    GUIDANCE_CONTENT: CONTENT,
     getDetectionStatus,
     getModelSuggestion,
     getDefaultConclusion,
