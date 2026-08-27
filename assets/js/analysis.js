@@ -54,7 +54,7 @@ import { loadTwoStage } from './yolo-inference.js?v=20260827.1';
     probabilityList: document.getElementById('probability-list'), analysisDuration: document.getElementById('analysis-duration'),
     threshold: document.getElementById('threshold'), thresholdValue: document.getElementById('threshold-value'), thresholdReset: document.getElementById('threshold-reset'), thresholdSave: document.getElementById('threshold-save'),
     detectionCard: document.getElementById('detection-status-card'), detectionTitle: document.getElementById('detection-status-title'),
-    detectionDescription: document.getElementById('detection-status-description'), analysisGuidance: document.getElementById('analysis-guidance'),
+    detectionDescription: document.getElementById('detection-status-description'), analysisGuidance: document.getElementById('analysis-guidance'), analysisGuidanceBlock: document.querySelector('.analysis-guidance-block'),
     guidanceEyebrow: document.getElementById('analysis-guidance-eyebrow'), guidanceTitle: document.getElementById('analysis-guidance-title'), guidanceSummary: document.getElementById('analysis-guidance-summary'),
     guidancePoints: document.getElementById('analysis-guidance-points'), referenceList: document.getElementById('analysis-reference-list'),
     previousDocumentation: document.getElementById('previous-documentation'), nextDocumentation: document.getElementById('next-documentation'),
@@ -307,7 +307,7 @@ import { loadTwoStage } from './yolo-inference.js?v=20260827.1';
     const top = outcome?.code === 'no_parasite_detected' ? { id: 'no_parasite_detected', label: 'Tidak ada box' } :
       (outcome?.primarySpecies ? evidenceTop : { id: 'review', label: 'Tinjauan manual' });
     const detection = detectionForSystem(systemResult); const guidance = window.MesentericaClinical.getGuidance(systemResult, top, detection);
-    elements.guidanceEyebrow.textContent = guidance.eyebrow; elements.guidanceTitle.textContent = guidance.title; elements.guidanceSummary.textContent = guidance.summary; elements.guidancePoints.replaceChildren();
+    elements.analysisGuidanceBlock.dataset.guidanceColor = guidance.color; elements.guidanceEyebrow.textContent = guidance.eyebrow; elements.guidanceTitle.textContent = guidance.title; elements.guidanceSummary.textContent = guidance.summary; elements.guidancePoints.replaceChildren();
     guidance.points.forEach((point) => { const item = document.createElement('li'); item.textContent = point; elements.guidancePoints.append(item); });
     elements.referenceList.replaceChildren();
     window.MesentericaClinical.getReferences(systemResult, top).forEach((reference) => {

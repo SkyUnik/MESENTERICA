@@ -4,6 +4,10 @@
   /*
    * EDIT TEKS REPORT-GUIDANCE DI FILE INI.
    *
+   * Warna global box diatur melalui `color`. Pilih salah satu:
+   * `blue`, `yellow`, `green`, atau `red`.
+   * Tambahkan `color` di dalam guidance tertentu untuk override per state/spesies.
+   *
    * Setiap guidance memiliki:
    * - title: judul besar di dalam box
    * - summary: paragraf penjelasan
@@ -16,6 +20,7 @@
    */
   window.MesentericaGuidanceContent = {
     eyebrow: 'Prioritas tinjauan non-preskriptif',
+    color: 'blue',
     states: {
       no_parasite_detected: {
         default: {

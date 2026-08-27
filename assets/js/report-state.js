@@ -23,7 +23,7 @@
     imageSize: document.getElementById('report-image-size'), analysisTime: document.getElementById('report-analysis-time'), threshold: document.getElementById('report-threshold'),
     detectionStatus: document.getElementById('report-threshold-status'), probabilityList: document.getElementById('report-probability-list'),
     clinicianConclusion: document.getElementById('report-clinician-conclusion'), caseNotes: document.getElementById('report-case-notes'),
-    guidanceEyebrow: document.getElementById('report-guidance-eyebrow'), guidanceTitle: document.getElementById('report-guidance-title'), guidanceSummary: document.getElementById('report-guidance-summary'), guidancePoints: document.getElementById('report-guidance-points'),
+    guidanceBox: document.querySelector('.report-guidance'), guidanceEyebrow: document.getElementById('report-guidance-eyebrow'), guidanceTitle: document.getElementById('report-guidance-title'), guidanceSummary: document.getElementById('report-guidance-summary'), guidancePoints: document.getElementById('report-guidance-points'),
     referenceList: document.getElementById('report-reference-list'), placeholder: document.querySelector('.report-placeholder'),
     placeholderDescription: document.getElementById('report-placeholder-description'), action: document.getElementById('report-placeholder-action'), footerStatus: document.getElementById('report-footer-status')
   };
@@ -97,7 +97,7 @@
   function renderGuidance(item, detection) {
     const system = item.inference.systemResult; const guidanceTop = system?.outcome?.code === 'no_parasite_detected' ? { id: 'no_parasite_detected', label: 'Tidak ada box' } :
       (system?.outcome?.primarySpecies ? item.inference.topClass : (system ? { id: 'review', label: 'Tinjauan manual' } : item.inference.topClass));
-    const guidance = window.MesentericaClinical.getGuidance(system, guidanceTop, detection); elements.guidanceEyebrow.textContent = guidance.eyebrow; elements.guidanceTitle.textContent = guidance.title; elements.guidanceSummary.textContent = guidance.summary; elements.guidancePoints.replaceChildren();
+    const guidance = window.MesentericaClinical.getGuidance(system, guidanceTop, detection); elements.guidanceBox.dataset.guidanceColor = guidance.color; elements.guidanceEyebrow.textContent = guidance.eyebrow; elements.guidanceTitle.textContent = guidance.title; elements.guidanceSummary.textContent = guidance.summary; elements.guidancePoints.replaceChildren();
     guidance.points.forEach((point) => { const listItem = document.createElement('li'); listItem.textContent = point; elements.guidancePoints.append(listItem); });
     elements.referenceList.replaceChildren();
     window.MesentericaClinical.getReferences(system, guidanceTop).forEach((reference) => {

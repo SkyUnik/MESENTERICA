@@ -26,6 +26,7 @@
     summary: 'Isi guidance untuk state ini belum tersedia.',
     points: Object.freeze([])
   });
+  const GUIDANCE_COLORS = Object.freeze(['blue', 'yellow', 'green', 'red']);
 
   function getDetectionStatus(score, threshold) {
     if (score >= threshold) return Object.freeze({ id: 'confident', label: 'Yakin', className: 'is-confident', description: `Skor tertinggi mencapai atau melewati threshold deteksi ${(threshold * 100).toFixed(0)}%.` });
@@ -44,8 +45,10 @@
 
   function normalizeGuidance(value) {
     const base = value || FALLBACK_GUIDANCE;
+    const configuredColor = typeof base.color === 'string' ? base.color : CONTENT?.color;
     return Object.freeze({
       eyebrow: typeof CONTENT?.eyebrow === 'string' ? CONTENT.eyebrow : 'Prioritas tinjauan non-preskriptif',
+      color: GUIDANCE_COLORS.includes(configuredColor) ? configuredColor : 'blue',
       title: typeof base.title === 'string' ? base.title : FALLBACK_GUIDANCE.title,
       summary: typeof base.summary === 'string' ? base.summary : FALLBACK_GUIDANCE.summary,
       points: Object.freeze(Array.isArray(base.points) ? [...base.points] : [])

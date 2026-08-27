@@ -1456,6 +1456,16 @@ summary:focus-visible {
   box-shadow: var(--shadow-soft);
 }
 
+.analysis-guidance-block[data-guidance-color] {
+  border-color: var(--guidance-border);
+  background: var(--guidance-background);
+}
+
+.analysis-guidance-block[data-guidance-color] .panel-kicker,
+.analysis-guidance-block[data-guidance-color] h2 {
+  color: var(--guidance-accent);
+}
+
 .analysis-guidance-panel h2 {
   margin: 3px 0 9px;
   font-size: 18px;
@@ -2329,6 +2339,35 @@ summary:focus-visible {
   background: #f5f7fa;
 }
 
+.report-guidance[data-guidance-color] {
+  border-color: var(--guidance-border);
+  background: var(--guidance-background);
+}
+
+[data-guidance-color="blue"] {
+  --guidance-border: #b9d7f3;
+  --guidance-background: #eef7ff;
+  --guidance-accent: #2563a7;
+}
+
+[data-guidance-color="yellow"] {
+  --guidance-border: #ead8ad;
+  --guidance-background: #fff8e6;
+  --guidance-accent: #9a6700;
+}
+
+[data-guidance-color="green"] {
+  --guidance-border: #b9ddcc;
+  --guidance-background: #edf9f3;
+  --guidance-accent: #23734d;
+}
+
+[data-guidance-color="red"] {
+  --guidance-border: #ead3d5;
+  --guidance-background: #fff0f1;
+  --guidance-accent: #9f272d;
+}
+
 .guidance-mark {
   width: 30px;
   height: 30px;
@@ -2340,6 +2379,15 @@ summary:focus-visible {
   font-family: Georgia, serif;
   font-style: italic;
   font-weight: 700;
+}
+
+.report-guidance[data-guidance-color] .guidance-mark {
+  background: var(--guidance-accent);
+}
+
+.report-guidance[data-guidance-color] > div > p:first-child,
+.report-guidance[data-guidance-color] h3 {
+  color: var(--guidance-accent);
 }
 
 .report-guidance h3 {
